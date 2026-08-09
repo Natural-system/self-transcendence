@@ -1,28 +1,18 @@
 ---
 layout: default
-title: 文章分类
-permalink: /categories/
+title: 首页
 ---
 
-<div class="categories-page">
-  <h1 class="page-title">全部分类</h1>
-
-  {% for category in site.categories %}
-    {% capture category_name %}{{ category | first }}{% endcapture %}
-    
-    <section id="{{ category_name }}" class="category-group" style="margin-top: 2rem;">
-      <h2 class="category-title" style="border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
-        📂 {{ category_name }} <span style="font-size: 0.8em; color: #888;">({{ site.categories[category_name] | size }} 篇)</span>
-      </h2>
-      
-      <ul class="post-list" style="list-style: none; padding-left: 0;">
-        {% for post in site.categories[category_name] %}
-          <li style="margin: 0.8rem 0; display: flex; justify-content: space-between;">
-            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-            <span style="color: #888;">{{ post.date | date: "%Y-%m-%d" }}</span>
-          </li>
-        {% endfor %}
-      </ul>
-    </section>
-  {% endfor %}
+<div class="home-posts">
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li class="post-item">
+        <div class="post-left">
+          <span class="post-index">{{ forloop.rindex | prepend: '00' | slice: -2, 2 }}</span>
+          <a class="post-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </div>
+        <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+      </li>
+    {% endfor %}
+  </ul>
 </div>
