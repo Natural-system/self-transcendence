@@ -1,0 +1,30 @@
+{% capture tocWorkspace %}
+  {% comment %}
+    自动解析 Markdown 标题并生成 HTML 目录列表
+  {% endcomment %}
+  {% assign my_min_toc_header = 2 %}
+  {% assign my_max_toc_header = 4 %}
+
+  {% assign nodes = include.html | split: '<h' %}
+  {% assign first_header = true %}
+
+  <ul class="section-nav">
+    {% for node in nodes %}
+      {% if first_header %}
+        {% assign first_header = false %}
+        {% continue %}
+      {% endif %}
+
+      {% assign header_level = node | slice: 0, 1 | plus: 0 %}
+
+      {% if header_level >= my_min_toc_header and header_level <= my_max_toc_header %}
+        {% assign html_id = node | split: 'id="' | last | split: '"' | first %}
+        {% assign title = node | split: '>' | offset: 1 | join: '>' | split: '</h' | first | strip_html %}
+        
+        <li class="toc-entry toc-h{{ header_level }}">
+          <a href="#{{ html_id }}">{{ title }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endcapture %}{% assign tocWorkspace = '' %}{{ tocWorkspace }}

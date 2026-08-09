@@ -1,0 +1,24 @@
+---
+layout: default
+title: 年份归档
+---
+
+<h2>年份归档</h2>
+
+<div class="archives-list">
+  {% for post in site.posts %}
+    {% capture currentyear %}{{ post.date | date: "%Y" }}{% endcapture %}
+    {% if currentyear != previousyear %}
+      {% if forloop.first == false %}</ul></section>{% endif %}
+      <section style="margin-bottom: 30px;">
+        <h3 style="border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">{{ currentyear }} 年</h3>
+        <ul class="post-list">
+      {% assign previousyear = currentyear %}
+    {% endif %}
+    <li class="post-item">
+      <a href="{{ post.url | relative_url }}" class="post-title">{{ post.title }}</a>
+      <span class="post-date">{{ post.date | date: "%m-%d" }}</span>
+    </li>
+    {% if forloop.last %}</ul></section>{% endif %}
+  {% endfor %}
+</div>

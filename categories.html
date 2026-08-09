@@ -1,0 +1,25 @@
+---
+layout: default
+title: 文章分类
+---
+
+<h2>文章分类</h2>
+
+<div class="categories-list">
+  {% for category in site.categories %}
+    {% capture category_name %}{{ category | first }}{% endcapture %}
+    <section style="margin-bottom: 30px;">
+      <h3 style="border-bottom: 1px dashed var(--border-color); padding-bottom: 8px;">
+        {{ category_name }} <span style="font-size: 0.85rem; color: var(--muted-color); font-weight: normal;">({{ site.categories[category_name].size }} 篇)</span>
+      </h3>
+      <ul class="post-list">
+        {% for post in site.categories[category_name] %}
+          <li class="post-item">
+            <a href="{{ post.url | relative_url }}" class="post-title">{{ post.title }}</a>
+            <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endfor %}
+</div>

@@ -1,0 +1,20 @@
+---
+layout: default
+---
+
+<ul class="post-list">
+  {% for post in site.posts %}
+    <li class="post-item">
+      <div class="post-left">
+        <span class="post-index">
+          {% assign index = site.posts.size | minus: forloop.index0 %}
+          {% if index < 10 %}0{{ index }}.{% else %}{{ index }}.{% endif %}
+        </span>
+        <a href="{{ post.url | relative_url }}" class="post-title">{{ post.title }}</a>
+      </div>
+      <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+    </li>
+  {% else %}
+    <li style="list-style: none; color: #8c8c8c;">暂无文章，请在 _posts 目录下新建 Markdown 文章。</li>
+  {% endfor %}
+</ul>
