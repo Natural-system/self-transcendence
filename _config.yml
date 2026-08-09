@@ -1,7 +1,7 @@
 title: Self-Transcendence
 email: lb@zasv.com
 description: >-
-  专注思考、文字与记录。纯文字，沉浸阅读。
+  自豪的说，我有一个高度健全+高度整合的人格。
 
 # 核心修正：指定 GitHub Pages 的二级目录路径与域名
 baseurl: "/self-transcendence"
@@ -18,3 +18,4 @@ markdown: kramdown
 exclude:
   - Gemfile
   - Gemfile.lock
+  - blog-template.md
