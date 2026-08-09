@@ -79,12 +79,27 @@
       margin-bottom: 20px;
     }
 
-    nav.top-nav {
+    /* 顶部导航栏：调宽平铺分类之间的间距 */
+    nav.site-nav {
       display: flex;
-      gap: 20px;
+      flex-wrap: wrap;       /* 手机端自动顺畅换行 */
+      gap: 16px 28px;        /* 上下间距 16px，左右分类间距 28px */
+      align-items: center;
       font-size: 0.95rem;
       font-weight: 500;
-      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    nav.site-nav a {
+      padding: 2px 0;
+      color: var(--text-color);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    nav.site-nav a:hover {
+      color: var(--accent-color);
+      border-bottom: 2px solid var(--accent-color);
     }
 
     /* 首页纯标题列表排版 */
@@ -144,7 +159,7 @@
         grid-template-columns: 1fr;
       }
       .sidebar-toc {
-        display: none; /* 移动端暂时隐藏悬浮目录，保证正文可读性 */
+        display: none; /* 移动端暂隐悬浮目录，保证正文可读性 */
       }
     }
 
@@ -211,20 +226,22 @@
     <header>
       <h1 class="site-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
       <div class="site-description">{{ site.description }}</div>
+      
+      <!-- 调宽分类间距的平铺导航栏 -->
       <nav class="site-nav">
-  <a href="{{ '/' | relative_url }}">首页</a>
-  
-  <!-- 具体分类 -->
-  <a href="{{ '/categories/#心理&社会' | relative_url }}">心理&社会</a>
-  <a href="{{ '/categories/#生活' | relative_url }}">生活</a>
-  <a href="{{ '/categories/#育儿' | relative_url }}">育儿</a>
-  <a href="{{ '/categories/#代码' | relative_url }}">代码</a>
-  <a href="{{ '/categories/#户外' | relative_url }}">户外</a>
-  <a href="{{ '/categories/#混合' | relative_url }}">混合</a>
-  
-  <a href="{{ '/archive/' | relative_url }}">发表年份</a>
-  <a href="{{ '/about/' | relative_url }}">关于</a>
-</nav>
+        <a href="{{ '/' | relative_url }}">首页</a>
+        
+        <!-- 平铺的具体分类 -->
+        <a href="{{ '/categories/#心理&社会' | relative_url }}">心理&社会</a>
+        <a href="{{ '/categories/#生活' | relative_url }}">生活</a>
+        <a href="{{ '/categories/#育儿' | relative_url }}">育儿</a>
+        <a href="{{ '/categories/#代码' | relative_url }}">代码</a>
+        <a href="{{ '/categories/#户外' | relative_url }}">户外</a>
+        <a href="{{ '/categories/#混合' | relative_url }}">混合</a>
+        
+        <a href="{{ '/archive/' | relative_url }}">年份归档</a>
+        <a href="{{ '/about/' | relative_url }}">关于</a>
+      </nav>
     </header>
 
     <main>
