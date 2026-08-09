@@ -1,19 +1,20 @@
 title: Self-Transcendence
-email: your-email@example.com
+email: lb@zasv.com
 description: >-
   专注思考、文字与记录。纯文字，沉浸阅读。
-baseurl: "" # 仓库名或者根路径
+
+# 核心修正：指定 GitHub Pages 的二级目录路径与域名
+baseurl: "/self-transcendence"
 url: "https://Natural-system.github.io"
 
-# 极简设置
-markdown: kramdown
-
-# 插件配置（已去掉分页插件冲突）
+# 核心修正：禁用 GitHub Pages 默认官方主题，允许加载自定义模板
+theme: jekyll-theme-primer # 强制忽略
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
 
-# 排除不必要的文件
+markdown: kramdown
+
 exclude:
   - Gemfile
   - Gemfile.lock
