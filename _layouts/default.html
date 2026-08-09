@@ -211,12 +211,20 @@
     <header>
       <h1 class="site-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
       <div class="site-description">{{ site.description }}</div>
-      <nav class="top-nav">
-        <a href="{{ '/' | relative_url }}">首页</a>
-        <a href="{{ '/categories/' | relative_url }}">分类</a>
-        <a href="{{ '/archives/' | relative_url }}">年份归档</a>
-        <a href="{{ '/about/' | relative_url }}">关于</a>
-      </nav>
+      <nav class="site-nav">
+  <a href="{{ '/' | relative_url }}">首页</a>
+  
+  <!-- 具体分类 -->
+  <a href="{{ '/categories/#心理&社会' | relative_url }}">心理&社会</a>
+  <a href="{{ '/categories/#生活' | relative_url }}">生活</a>
+  <a href="{{ '/categories/#育儿' | relative_url }}">育儿</a>
+  <a href="{{ '/categories/#代码' | relative_url }}">代码</a>
+  <a href="{{ '/categories/#户外' | relative_url }}">户外</a>
+  <a href="{{ '/categories/#混合' | relative_url }}">混合</a>
+  
+  <a href="{{ '/archive/' | relative_url }}">发表年份</a>
+  <a href="{{ '/about/' | relative_url }}">关于</a>
+</nav>
     </header>
 
     <main>
