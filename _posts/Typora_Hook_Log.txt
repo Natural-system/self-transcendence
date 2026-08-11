@@ -448,3 +448,31 @@ DwIDAQAB
 ------------------
 [2026/8/11 23:51:26] [Log] [IPC] .handle("app.sendEvent") result: 
 ------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .invoke("setting.removeRecentDocument") args: ["D:\\Code\\self-transcendence\\.git\\objects\\af\\tmp_obj_8Q90GI"]
+------------------
+[2026/8/11 23:51:35] [Log] [IPC] .handle("setting.removeRecentDocument") result: 
+------------------
