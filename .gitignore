@@ -7,3 +7,7 @@ vendor
 # Log files
 *.log
 _posts/*.log
+
+# 忽略 Typora 破解/Hook 产生的动态日志文件
+Typora_Hook_Log*
+_posts/Typora_Hook_Log*
