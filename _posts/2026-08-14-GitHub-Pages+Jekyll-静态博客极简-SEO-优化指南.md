@@ -16,6 +16,7 @@ categories: 代码
 站点地图（`sitemap.xml`）是给 Google 爬虫提供的“全站地图”，能让爬虫一次性抓取并索引全站的所有文章。
 
 ### 配置步骤：
+
 打开项目根目录下的 **`_config.yml`** 文件，在 `plugins` 列表中添加 `jekyll-sitemap` 插件：
 
 ```yaml
