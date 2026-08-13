@@ -28,7 +28,6 @@ permalink: /archive/
 
       <ul class="post-list">
         {% for post in year_group.items %}
-          <!-- 前 10 篇正常显示，第 11 篇起加上 class="more-post" 用于隐藏 -->
           <li class="post-item {% if forloop.index > 10 %}more-post{% endif %}">
             <div class="post-left">
               <span class="post-index">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
@@ -40,9 +39,13 @@ permalink: /archive/
       </ul>
 
       {% if total_count > 10 %}
-        <!-- 展开按钮：关联单选框 -->
-        <label for="toggle-year-{{ year_group.name }}" class="btn-show-more">
-          剩余 {{ remaining_count }} 篇文章，点击展示 ↓
+        <!-- 1. 展开按钮（未展开时显示） -->
+        <label for="toggle-year-{{ year_group.name }}" class="btn-toggle-year btn-expand">
+          剩余 {{ remaining_count }} 篇文章，点击展开 ↓
+        </label>
+        <!-- 2. 收起按钮（展开后自动显示在文章最下方） -->
+        <label for="toggle-year-{{ year_group.name }}" class="btn-toggle-year btn-collapse">
+          收起该年份文章 ↑
         </label>
       {% endif %}
     </div>
