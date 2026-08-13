@@ -1,0 +1,45 @@
+---
+layout: default
+title: 分类归档
+permalink: /categories/
+---
+
+<h2>分类归档</h2>
+
+{% for category in site.categories %}
+  {% capture cat_name %}{{ category | first }}{% endcapture %}
+  <div class="category-block" id="cat-{{ cat_name }}">
+    <h3>{{ cat_name }}</h3>
+    <ul>
+      {% for post in category[1] %}
+        <li>
+          <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span> - 
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endfor %}
+
+<script>
+  function filterCategory() {
+    var hash = decodeURIComponent(window.location.hash.replace('#', ''));
+    var blocks = document.querySelectorAll('.category-block');
+    if (hash) {
+      blocks.forEach(function(block) {
+        if (block.id === 'cat-' + hash) {
+          block.style.display = 'block';
+        } else {
+          block.style.display = 'none';
+        }
+      });
+    } else {
+      blocks.forEach(function(block) {
+        block.style.display = 'block';
+      });
+    }
+  }
+
+  window.addEventListener('hashchange', filterCategory);
+  window.addEventListener('DOMContentLoaded', filterCategory);
+</script>
