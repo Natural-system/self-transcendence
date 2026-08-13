@@ -4,10 +4,25 @@ title: 年份归档
 permalink: /archive/
 ---
 
+{% comment %} 1. 自动计算全站文章总字数 {% endcomment %}
+{% assign total_words = 0 %}
+{% for post in site.posts %}
+  {% assign post_words = post.content | strip_html | strip_newlines | size %}
+  {% assign total_words = total_words | plus: post_words %}
+{% endfor %}
+
+{% comment %} 2. 根据字数四舍五入换算为“万字”或普通数字 {% endcomment %}
+{% if total_words >= 10000 %}
+  {% assign display_words = total_words | divided_by: 10000.0 | round %}
+  {% assign formatted_words = display_words | append: "万字" %}
+{% else %}
+  {% assign formatted_words = total_words | append: "字" %}
+{% endif %}
+
 <h2>
   年份归档
   <span style="font-size: 0.9rem; font-weight: normal; color: var(--muted-color); margin-left: 8px;">
-    （全站共计 {{ site.posts.size }} 篇）
+    （全站共计 {{ site.posts.size }} 篇，{{ formatted_words }}）
   </span>
 </h2>
 
@@ -39,11 +54,11 @@ permalink: /archive/
       </ul>
 
       {% if total_count > 10 %}
-        <!-- 1. 展开按钮（使用更清晰的图形箭头 ▼，并加大间距） -->
+        <!-- 1. 展开按钮 -->
         <label for="toggle-year-{{ year_group.name }}" class="btn-toggle-year btn-expand">
           剩余 {{ remaining_count }} 篇文章，点击展开 <span class="arrow-icon">▼</span>
         </label>
-        <!-- 2. 收起按钮（使用更清晰的图形箭头 ▲，并加大间距） -->
+        <!-- 2. 收起按钮 -->
         <label for="toggle-year-{{ year_group.name }}" class="btn-toggle-year btn-collapse">
           收起该年份文章 <span class="arrow-icon">▲</span>
         </label>
