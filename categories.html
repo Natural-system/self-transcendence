@@ -4,42 +4,175 @@ title: 分类归档
 permalink: /categories/
 ---
 
-<h2>分类归档</h2>
+<h2 id="category-title">分类归档</h2>
 
-{% for category in site.categories %}
-  {% capture cat_name %}{{ category | first }}{% endcapture %}
-  <div class="category-block" id="cat-{{ cat_name }}">
-    <h3>{{ cat_name }}</h3>
-    <ul>
-      {% for post in category[1] %}
-        <li>
-          <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span> - 
-          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-{% endfor %}
+<div class="category-posts">
+  <ul class="post-list" id="category-post-list">
+    <!-- JS 将在此处渲染当前分类、当前页面的文章 -->
+  </ul>
+</div>
+
+<!-- 分页导航 -->
+<div class="pagination" id="category-pagination" style="display: none;"></div>
 
 <script>
-  function filterCategory() {
-    var hash = decodeURIComponent(window.location.hash.replace('#', ''));
-    var blocks = document.querySelectorAll('.category-block');
-    if (hash) {
-      blocks.forEach(function(block) {
-        if (block.id === 'cat-' + hash) {
-          block.style.display = 'block';
-        } else {
-          block.style.display = 'none';
-        }
-      });
-    } else {
-      blocks.forEach(function(block) {
-        block.style.display = 'block';
-      });
+  // 1. 构建所有分类与其下的文章数据
+  var categoryData = {
+    {% for category in site.categories %}
+      {% capture cat_name %}{{ category | first }}{% endcapture %}
+      {{ cat_name | jsonify }}: [
+        {% for post in category[1] %}
+          {
+            "title": {{ post.title | jsonify }},
+            "url": {{ post.url | relative_url | jsonify }},
+            "date": "{{ post.date | date: '%Y-%m-%d' }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  };
+
+  var pageSize = 30; // 每页 30 篇
+
+  // 解析 URL Hash 和 Query（例如：#户外?page=2）
+  function parseState() {
+    var rawHash = window.location.hash.replace('#', '');
+    var cat = '';
+    var page = 1;
+
+    if (rawHash) {
+      var parts = rawHash.split('?');
+      cat = decodeURIComponent(parts[0]);
+      if (parts[1]) {
+        var params = new URLSearchParams(parts[1]);
+        var p = parseInt(params.get('page'), 10);
+        if (!isNaN(p) && p > 0) page = p;
+      }
     }
+
+    return { category: cat, page: page };
   }
 
-  window.addEventListener('hashchange', filterCategory);
-  window.addEventListener('DOMContentLoaded', filterCategory);
+  function renderCategoryPage() {
+    var state = parseState();
+    var currentCat = state.category;
+    var currentPage = state.page;
+
+    var titleEl = document.getElementById('category-title');
+    var listContainer = document.getElementById('category-post-list');
+    var paginationContainer = document.getElementById('category-pagination');
+
+    // 情况 A：未指定 Hash 分类，渲染全部分类简表（不做分页，供总览）
+    if (!currentCat || !categoryData[currentCat]) {
+      titleEl.textContent = '全部分类归档';
+      paginationContainer.style.display = 'none';
+
+      var allCatHtml = '';
+      for (var cat in categoryData) {
+        allCatHtml += '<div style="margin-bottom: 30px;">' +
+                        '<h3><a href="#' + encodeURIComponent(cat) + '" onclick="setTimeout(renderCategoryPage, 50)">' + cat + ' (' + categoryData[cat].length + ' 篇)</a></h3>' +
+                        '<ul class="post-list">';
+        categoryData[cat].slice(0, 5).forEach(function(post) {
+          allCatHtml += '<li class="post-item">' +
+                          '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                          '<span class="post-date">' + post.date + '</span>' +
+                        '</li>';
+        });
+        if (categoryData[cat].length > 5) {
+          allCatHtml += '<li class="post-item" style="color:var(--muted-color); font-size:0.85rem; padding: 6px 0;">...更多文章请点击分类标题</li>';
+        }
+        allCatHtml += '</ul></div>';
+      }
+      listContainer.innerHTML = allCatHtml;
+      return;
+    }
+
+    // 情况 B：选中了具体分类（如：心理&社会、生活、育儿、代码、户外、其他）
+    var posts = categoryData[currentCat] || [];
+    var totalPosts = posts.length;
+    var totalPages = Math.ceil(totalPosts / pageSize) || 1;
+
+    // 交互边界保护：若输入的页码超出最大页数，自动修正跳转到最后一页
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+
+    titleEl.textContent = currentCat + ' (' + totalPosts + ' 篇)';
+
+    // 截取 30 篇展示
+    var startIndex = (currentPage - 1) * pageSize;
+    var endIndex = Math.min(startIndex + pageSize, totalPosts);
+    var pagePosts = posts.slice(startIndex, endIndex);
+
+    var listHtml = '';
+    pagePosts.forEach(function(post) {
+      listHtml += '<li class="post-item">' +
+                    '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                    '<span class="post-date">' + post.date + '</span>' +
+                  '</li>';
+    });
+    listContainer.innerHTML = listHtml;
+
+    // 渲染分页组件
+    if (totalPages <= 1) {
+      paginationContainer.style.display = 'none';
+      return;
+    }
+    paginationContainer.style.display = 'flex';
+
+    var pagHtml = '';
+
+    // 数字页码
+    for (var i = 1; i <= totalPages; i++) {
+      if (i === currentPage) {
+        pagHtml += '<span class="active">' + i + '</span>';
+      } else {
+        pagHtml += '<a href="javascript:void(0)" onclick="goToCatPage(\'' + currentCat + '\', ' + i + ')">' + i + '</a>';
+      }
+    }
+
+    // 下一页按钮
+    if (currentPage < totalPages) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToCatPage(\'' + currentCat + '\', ' + (currentPage + 1) + ')">下一页</a>';
+    } else {
+      pagHtml += '<span class="disabled">下一页</span>';
+    }
+
+    // 末页按钮
+    if (currentPage < totalPages) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToCatPage(\'' + currentCat + '\', ' + totalPages + ')">末页</a>';
+    } else {
+      pagHtml += '<span class="disabled">末页</span>';
+    }
+
+    // 跳转输入框 + 按钮
+    pagHtml += '<div class="pagination-jump">' +
+                 '<input type="number" id="cat-jump-input" min="1" max="' + totalPages + '" placeholder="' + currentPage + '">' +
+                 '<button type="button" onclick="handleCatJump(\'' + currentCat + '\', ' + totalPages + ')">跳转</button>' +
+               '</div>';
+
+    paginationContainer.innerHTML = pagHtml;
+  }
+
+  function goToCatPage(cat, page) {
+    window.location.hash = encodeURIComponent(cat) + '?page=' + page;
+    renderCategoryPage();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleCatJump(cat, totalPages) {
+    var input = document.getElementById('cat-jump-input');
+    var val = parseInt(input.value, 10);
+    if (isNaN(val) || val < 1) {
+      val = 1;
+    }
+    // 超出最大页码时自动修正到末页
+    if (val > totalPages) {
+      val = totalPages;
+    }
+    goToCatPage(cat, val);
+  }
+
+  window.addEventListener('hashchange', renderCategoryPage);
+  window.addEventListener('DOMContentLoaded', renderCategoryPage);
 </script>

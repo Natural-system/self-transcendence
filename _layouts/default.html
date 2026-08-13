@@ -216,6 +216,80 @@
       color: var(--muted-color);
       text-align: center;
     }
+
+    /* 极简通用分页导航组件样式 */
+    .pagination {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+    }
+
+    .pagination a, .pagination button {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 4px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .pagination a:hover, .pagination button:hover {
+      border-color: var(--accent-color);
+      background-color: #f0f0ec;
+      text-decoration: none;
+    }
+
+    .pagination .active {
+      background-color: var(--accent-color);
+      color: #ffffff;
+      border-color: var(--accent-color);
+    }
+
+    .pagination .active:hover {
+      background-color: var(--accent-color);
+      color: #ffffff;
+    }
+
+    .pagination .disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: var(--border-color) !important;
+      background: transparent !important;
+    }
+
+    .pagination-jump {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .pagination-jump input {
+      width: 42px;
+      padding: 4px 6px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border-radius: 3px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .pagination-jump input:focus {
+      border-color: var(--accent-color);
+    }
   </style>
 </head>
 <body>

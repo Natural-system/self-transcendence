@@ -4,15 +4,126 @@ title: 首页
 ---
 
 <div class="home-posts">
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li class="post-item">
-        <div class="post-left">
-          <span class="post-index">{{ forloop.rindex | prepend: '00' | slice: -2, 2 }}</span>
-          <a class="post-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-        </div>
-        <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-      </li>
-    {% endfor %}
+  <ul class="post-list" id="index-post-list">
+    <!-- JS 将在此处渲染当前页面的 30 篇文章 -->
   </ul>
 </div>
+
+<!-- 分页导航 -->
+<div class="pagination" id="index-pagination" style="display: none;"></div>
+
+<script>
+  // 1. 构建所有文章的元数据数组
+  var allPosts = [
+    {% for post in site.posts %}
+      {
+        "title": {{ post.title | jsonify }},
+        "url": {{ post.url | relative_url | jsonify }},
+        "date": "{{ post.date | date: '%Y-%m-%d' }}",
+        "index": "{{ forloop.rindex | prepend: '00' | slice: -2, 2 }}"
+      }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ];
+
+  var pageSize = 30; // 每页 30 篇
+
+  function getPageFromUrl() {
+    var params = new URLSearchParams(window.location.search);
+    var page = parseInt(params.get('page'), 10);
+    return isNaN(page) || page < 1 ? 1 : page;
+  }
+
+  function renderIndex() {
+    var totalPosts = allPosts.length;
+    var totalPages = Math.ceil(totalPosts / pageSize) || 1;
+    var currentPage = getPageFromUrl();
+
+    // 交互边界保护：如果当前页超过最大页，自动修正到末页
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+
+    // 渲染文章列表
+    var listContainer = document.getElementById('index-post-list');
+    var startIndex = (currentPage - 1) * pageSize;
+    var endIndex = Math.min(startIndex + pageSize, totalPosts);
+    var pagePosts = allPosts.slice(startIndex, endIndex);
+
+    var html = '';
+    pagePosts.forEach(function(post) {
+      html += '<li class="post-item">' +
+                '<div class="post-left">' +
+                  '<span class="post-index">' + post.index + '</span>' +
+                  '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                '</div>' +
+                '<span class="post-date">' + post.date + '</span>' +
+              '</li>';
+    });
+    listContainer.innerHTML = html;
+
+    // 渲染分页控件
+    var paginationContainer = document.getElementById('index-pagination');
+    if (totalPages <= 1) {
+      paginationContainer.style.display = 'none';
+      return;
+    }
+    paginationContainer.style.display = 'flex';
+
+    var pagHtml = '';
+
+    // 数字页码
+    for (var i = 1; i <= totalPages; i++) {
+      if (i === currentPage) {
+        pagHtml += '<span class="active">' + i + '</span>';
+      } else {
+        pagHtml += '<a href="javascript:void(0)" onclick="goToPage(' + i + ')">' + i + '</a>';
+      }
+    }
+
+    // 下一页按钮
+    if (currentPage < totalPages) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToPage(' + (currentPage + 1) + ')">下一页</a>';
+    } else {
+      pagHtml += '<span class="disabled">下一页</span>';
+    }
+
+    // 末页按钮
+    if (currentPage < totalPages) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToPage(' + totalPages + ')">末页</a>';
+    } else {
+      pagHtml += '<span class="disabled">末页</span>';
+    }
+
+    // 输入框 + 跳转按钮
+    pagHtml += '<div class="pagination-jump">' +
+                 '<input type="number" id="jump-input" min="1" max="' + totalPages + '" placeholder="' + currentPage + '">' +
+                 '<button type="button" onclick="handleJump(' + totalPages + ')">跳转</button>' +
+               '</div>';
+
+    paginationContainer.innerHTML = pagHtml;
+  }
+
+  function goToPage(page) {
+    var url = new URL(window.location.href);
+    url.searchParams.set('page', page);
+    window.history.pushState({}, '', url);
+    renderIndex();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function handleJump(totalPages) {
+    var input = document.getElementById('jump-input');
+    var val = parseInt(input.value, 10);
+    if (isNaN(val) || val < 1) {
+      val = 1;
+    }
+    // 关键校验：若超过总页数，则自动跳转到最后一页
+    if (val > totalPages) {
+      val = totalPages;
+    }
+    goToPage(val);
+  }
+
+  window.addEventListener('popstate', renderIndex);
+  window.addEventListener('DOMContentLoaded', renderIndex);
+</script>
