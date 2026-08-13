@@ -6,6 +6,11 @@ permalink: /archive/
 
 <h2>年份归档</h2>
 
+<!-- 新增：全站文章总计篇数 -->
+<p style="color: var(--muted-color); font-size: 0.95rem; margin-top: -5px; margin-bottom: 25px;">
+  全站共计 <strong>{{ site.posts.size }}</strong> 篇文章
+</p>
+
 {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
 
 {% for year_group in posts_by_year %}
