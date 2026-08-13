@@ -302,7 +302,7 @@
       border-color: var(--accent-color);
     }
 /* ========================================== */
-/* --- 新增：年份归档纯 CSS 折叠/收起控制 --- */
+/* --- 年份归档纯 CSS 折叠/收起控制（清晰大字版） --- */
 /* ========================================== */
 
 /* 隐藏用于状态切换的 checkbox */
@@ -315,26 +315,35 @@
   display: none;
 }
 
-/* 按钮通用醒目样式 */
+/* 按钮通用醒目样式（增大了字号与内边距，方便识别与点击） */
 .btn-toggle-year {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* 确保文字与箭头间有清晰的空隙 */
   margin-top: 14px;
-  padding: 6px 16px;
-  font-size: 0.88rem;
+  padding: 8px 18px; /* 增大点击区域 */
+  font-size: 0.95rem; /* 字号适度放大 */
   font-weight: 500;
   color: var(--text-color);
-  background-color: #f0f0ec; /* 更明显的浅灰背景 */
-  border: 1px solid #dcdcd8;   /* 更加清晰的实线边框 */
-  border-radius: 4px;
+  background-color: #f0f0ec;
+  border: 1px solid #dcdcd8;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); /* 轻微阴影，增加视觉层级 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .btn-toggle-year:hover {
   color: #ffffff;
-  background-color: var(--accent-color); /* 悬停变为黑底白字，非常醒目 */
+  background-color: var(--accent-color);
   border-color: var(--accent-color);
+}
+
+/* 箭头符号独立控制：加粗并放大 */
+.btn-toggle-year .arrow-icon {
+  font-size: 0.85rem;
+  font-weight: bold;
+  line-height: 1;
 }
 
 /* 默认状态：隐藏“收起”按钮 */
@@ -343,19 +352,16 @@
 }
 
 /* 核心逻辑：当复选框被勾选（展开状态）时 */
-/* 1. 展示第 11 篇及以后的文章 */
 .year-toggle-checkbox:checked ~ .post-list .more-post {
   display: flex !important;
 }
 
-/* 2. 隐藏“展开”按钮 */
 .year-toggle-checkbox:checked ~ .btn-expand {
   display: none !important;
 }
 
-/* 3. 显现文章末尾的“收起”按钮 */
 .year-toggle-checkbox:checked ~ .btn-collapse {
-  display: inline-block !important;
+  display: inline-flex !important;
 }
   </style>
 </head>

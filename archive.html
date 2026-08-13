@@ -39,13 +39,13 @@ permalink: /archive/
       </ul>
 
       {% if total_count > 10 %}
-        <!-- 1. 展开按钮（未展开时显示） -->
+        <!-- 1. 展开按钮（使用更清晰的图形箭头 ▼，并加大间距） -->
         <label for="toggle-year-{{ year_group.name }}" class="btn-toggle-year btn-expand">
-          剩余 {{ remaining_count }} 篇文章，点击展开 ↓
+          剩余 {{ remaining_count }} 篇文章，点击展开 <span class="arrow-icon">▼</span>
         </label>
-        <!-- 2. 收起按钮（展开后自动显示在文章最下方） -->
+        <!-- 2. 收起按钮（使用更清晰的图形箭头 ▲，并加大间距） -->
         <label for="toggle-year-{{ year_group.name }}" class="btn-toggle-year btn-collapse">
-          收起该年份文章 ↑
+          收起该年份文章 <span class="arrow-icon">▲</span>
         </label>
       {% endif %}
     </div>
