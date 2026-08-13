@@ -3,63 +3,20 @@ layout: default
 title: 首页
 ---
 
-<style>
-  /* 1. 首页文章列表行距：与分类归档页面保持完全一致的紧凑排版 */
-  .home-posts .post-item {
-    padding: 6px 0; /* 极简紧凑间距 */
-  }
-  .home-posts .post-index {
-    font-family: var(--font-mono);
-    color: var(--muted-color);
-    font-size: 0.85rem;
-    min-width: 32px; /* 容纳 01, 02 序号 */
-  }
-
-  /* 搜索框样式 */
-  .search-container {
-    margin: 15px 0 25px 0;
-  }
-  .search-input {
-    width: 100%;
-    padding: 8px 12px;
-    font-size: 0.95rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    outline: none;
-    box-sizing: border-box;
-    transition: border-color 0.2s;
-  }
-  .search-input:focus {
-    border-color: #666;
-  }
-  .search-no-result {
-    display: none;
-    color: var(--muted-color);
-    padding: 15px 0;
-    font-size: 0.9rem;
-  }
-</style>
-
 <h2>文章列表</h2>
-
-<!-- 模糊搜索框 -->
-<div class="search-container">
-  <input type="text" id="site-search-input" class="search-input" placeholder="搜索文章标题或关键词..." oninput="handleSearch()">
-</div>
 
 <div class="home-posts">
   <ul class="post-list" id="home-post-list">
     <!-- JS 将在此处渲染当前页面的文章 -->
   </ul>
-  <div id="no-search-result" class="search-no-result">未找到相关文章</div>
 </div>
 
 <!-- 分页导航 -->
 <div class="pagination" id="home-pagination" style="display: none;"></div>
 
 <script>
-  // 构建首页所有文章数据
-  var allPosts = [
+  // 构建首页所有文章数据（按默认发布倒序获取）
+  var rawPosts = [
     {% for post in site.posts %}
       {
         "title": {{ post.title | jsonify }},
@@ -69,11 +26,9 @@ title: 首页
     {% endfor %}
   ];
 
-  var filteredPosts = allPosts; // 搜索过滤后的文章数组
-  var pageSize = 20; // 【需求 2】：首页每页展示 20 篇
+  var pageSize = 20; // 首页每页展示 20 篇
   var currentPage = 1;
 
-  // 从 URL 读取页码参数（如 ?page=2）
   function getPageFromUrl() {
     var params = new URLSearchParams(window.location.search);
     var p = parseInt(params.get('page'), 10);
@@ -82,32 +37,22 @@ title: 首页
 
   function renderHomePage() {
     currentPage = getPageFromUrl();
-    var totalPosts = filteredPosts.length;
+    var totalPosts = rawPosts.length;
     var totalPages = Math.ceil(totalPosts / pageSize) || 1;
 
     if (currentPage > totalPages) currentPage = totalPages;
 
     var listContainer = document.getElementById('home-post-list');
-    var noResultEl = document.getElementById('no-search-result');
     var paginationContainer = document.getElementById('home-pagination');
-
-    if (totalPosts === 0) {
-      listContainer.innerHTML = '';
-      noResultEl.style.display = 'block';
-      paginationContainer.style.display = 'none';
-      return;
-    } else {
-      noResultEl.style.display = 'none';
-    }
 
     // 截取当前页 20 篇文章
     var startIndex = (currentPage - 1) * pageSize;
     var endIndex = Math.min(startIndex + pageSize, totalPosts);
-    var pagePosts = filteredPosts.slice(startIndex, endIndex);
+    var pagePosts = rawPosts.slice(startIndex, endIndex);
 
     var listHtml = '';
     pagePosts.forEach(function(post, idx) {
-      // 【需求 3】：正向编号，从 01 开始递增，分页后序号平滑延续（如第2页为 21, 22...）
+      // 计算正向编号（排最顶部为 01，第二篇 02，换页顺延）
       var globalSeq = startIndex + idx + 1;
       var seqStr = (globalSeq < 10 ? '0' : '') + globalSeq;
 
@@ -121,7 +66,7 @@ title: 首页
     });
     listContainer.innerHTML = listHtml;
 
-    // 分页组件（多于 20 篇时自动渲染）
+    // 分页组件（超过 20 篇自动渲染）
     if (totalPages <= 1) {
       paginationContainer.style.display = 'none';
       return;
@@ -149,30 +94,12 @@ title: 首页
       pagHtml += '<span class="disabled">末页</span>';
     }
 
-    // 页码跳转
     pagHtml += '<div class="pagination-jump">' +
                  '<input type="number" id="home-jump-input" min="1" max="' + totalPages + '" placeholder="' + currentPage + '">' +
                  '<button type="button" onclick="handleHomeJump(' + totalPages + ')">跳转</button>' +
                '</div>';
 
     paginationContainer.innerHTML = pagHtml;
-  }
-
-  // 实时模糊搜索处理
-  function handleSearch() {
-    var query = document.getElementById('site-search-input').value.trim().toLowerCase();
-    
-    if (!query) {
-      filteredPosts = allPosts;
-    } else {
-      filteredPosts = allPosts.filter(function(post) {
-        return post.title.toLowerCase().indexOf(query) !== -1;
-      });
-    }
-
-    // 搜索时重置到第 1 页并重新渲染
-    history.replaceState(null, '', window.location.pathname);
-    renderHomePage();
   }
 
   function goToHomePaging(page) {

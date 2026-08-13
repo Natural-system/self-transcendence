@@ -79,11 +79,11 @@
       margin-bottom: 20px;
     }
 
-    /* 顶部导航栏（已修复 hover 抖动问题） */
+    /* 顶部导航栏 */
     nav.site-nav {
       display: flex;
-      flex-wrap: wrap;       /* 手机端自动顺畅换行 */
-      gap: 16px 28px;        /* 上下间距 16px，左右分类间距 28px */
+      flex-wrap: wrap;
+      gap: 16px 24px;
       align-items: center;
       font-size: 0.95rem;
       font-weight: 500;
@@ -95,17 +95,33 @@
       color: var(--text-color);
       text-decoration: none;
       white-space: nowrap;
-      border-bottom: 2px solid transparent; /* 预先占用 2px 空间，防止 hover 时撑高页面导致抖动 */
+      border-bottom: 2px solid transparent;
       transition: border-color 0.2s ease, color 0.2s ease;
     }
 
     nav.site-nav a:hover {
       color: var(--accent-color);
-      border-bottom-color: var(--accent-color); /* 仅改变下划线颜色，不改变高度 */
-      text-decoration: none; /* 禁用默认文本下划线，使用自定义的 border 下划线 */
+      border-bottom-color: var(--accent-color);
+      text-decoration: none;
     }
 
-    /* 首页纯标题列表排版 */
+    /* 紧凑的输入框样式 */
+    .nav-search-input {
+      width: 120px;
+      padding: 3px 8px;
+      font-size: 0.82rem;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.2s ease, width 0.2s ease;
+    }
+    .nav-search-input:focus {
+      border-color: var(--accent-color);
+      width: 150px;
+    }
+
+    /* 统一的文章列表排版 */
     .post-list {
       list-style: none;
       padding: 0;
@@ -116,7 +132,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding: 12px 0;
+      padding: 6px 0; /* 统一紧凑行距 */
       border-bottom: 1px dashed var(--border-color);
     }
 
@@ -132,8 +148,8 @@
     .post-index {
       font-family: var(--font-mono);
       color: var(--muted-color);
-      font-size: 0.9rem;
-      min-width: 28px;
+      font-size: 0.85rem;
+      min-width: 32px;
     }
 
     .post-title {
@@ -162,7 +178,7 @@
         grid-template-columns: 1fr;
       }
       .sidebar-toc {
-        display: none; /* 移动端暂隐悬浮目录，保证正文可读性 */
+        display: none;
       }
     }
 
@@ -217,7 +233,7 @@
       text-align: center;
     }
 
-    /* 极简通用分页导航组件样式 */
+    /* 通用分页导航 */
     .pagination {
       display: flex;
       flex-wrap: wrap;
@@ -254,11 +270,6 @@
       background-color: var(--accent-color);
       color: #ffffff;
       border-color: var(--accent-color);
-    }
-
-    .pagination .active:hover {
-      background-color: var(--accent-color);
-      color: #ffffff;
     }
 
     .pagination .disabled {
@@ -307,17 +318,19 @@
       <!-- 平铺导航栏 -->
       <nav class="site-nav">
         <a href="{{ '/' | relative_url }}">首页</a>
-        
-        <!-- 平铺的具体分类 -->
         <a href="{{ '/categories/#心理&社会' | relative_url }}">心理&社会</a>
         <a href="{{ '/categories/#生活' | relative_url }}">生活</a>
         <a href="{{ '/categories/#育儿' | relative_url }}">育儿</a>
         <a href="{{ '/categories/#代码' | relative_url }}">代码</a>
         <a href="{{ '/categories/#户外' | relative_url }}">户外</a>
         <a href="{{ '/categories/#其他' | relative_url }}">其他</a>
-        
         <a href="{{ '/archive/' | relative_url }}">年份归档</a>
         <a href="{{ '/about/' | relative_url }}">关于</a>
+
+        <!-- 置于“关于”右侧的页头搜索框 -->
+        <div style="display: inline-flex; align-items: center; margin-left: 4px;">
+          <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
+        </div>
       </nav>
     </header>
 
@@ -330,8 +343,20 @@
     </footer>
   </div>
 
+  <!-- 全局搜索弹窗组件 -->
+  <div id="search-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.3); z-index:9999; backdrop-filter: blur(2px);" onclick="closeSearchModal(event)">
+    <div style="max-width: 680px; margin: 80px auto 0; background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); max-height: 70vh; overflow-y: auto;" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-scale:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="margin:0; font-size: 1.05rem; color:#333;">搜索结果</h3>
+        <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.2rem; color:#888;">&times;</span>
+      </div>
+      <ul id="search-results-list" class="post-list"></ul>
+      <div id="search-no-results" style="display:none; color:var(--muted-color); font-size:0.9rem; padding: 15px 0;">未找到相关文章</div>
+    </div>
+  </div>
+
   <script>
-    // 顶部阅读进度条逻辑
+    // 1. 顶部阅读进度条
     window.onscroll = function() {
       var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
       var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -339,6 +364,70 @@
       var pb = document.getElementById("myProgressBar");
       if(pb) pb.style.width = scrolled + "%";
     };
+
+    // 2. 构建全站包含【标题 + 文章全文】的数据库（支持模糊搜索正文/育儿等词）
+    var globalSearchDB = [
+      {% for post in site.posts %}
+        {
+          "title": {{ post.title | jsonify }},
+          "url": {{ post.url | relative_url | jsonify }},
+          "date": "{{ post.date | date: '%Y-%m-%d' }}",
+          "content": {{ post.content | strip_html | strip_newlines | jsonify }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ];
+
+    function handleGlobalSearch() {
+      var input = document.getElementById('global-search-input');
+      var query = input.value.trim().toLowerCase();
+      var overlay = document.getElementById('search-modal-overlay');
+      var listContainer = document.getElementById('search-results-list');
+      var noResultEl = document.getElementById('search-no-results');
+
+      if (!query) {
+        overlay.style.display = 'none';
+        return;
+      }
+
+      var matches = globalSearchDB.filter(function(post) {
+        var matchTitle = post.title.toLowerCase().indexOf(query) !== -1;
+        var matchContent = post.content.toLowerCase().indexOf(query) !== -1;
+        return matchTitle || matchContent;
+      });
+
+      overlay.style.display = 'block';
+
+      if (matches.length === 0) {
+        listContainer.innerHTML = '';
+        noResultEl.style.display = 'block';
+      } else {
+        noResultEl.style.display = 'none';
+        var html = '';
+        matches.forEach(function(post, idx) {
+          var seq = (idx + 1 < 10 ? '0' : '') + (idx + 1);
+          html += '<li class="post-item">' +
+                    '<div class="post-left">' +
+                      '<span class="post-index">' + seq + '</span>' +
+                      '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                    '</div>' +
+                    '<span class="post-date">' + post.date + '</span>' +
+                  '</li>';
+        });
+        listContainer.innerHTML = html;
+      }
+    }
+
+    function closeSearchModal(e) {
+      document.getElementById('search-modal-overlay').style.display = 'none';
+    }
+
+    function closeSearchModalDirect() {
+      document.getElementById('search-modal-overlay').style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSearchModalDirect();
+    });
   </script>
 </body>
 </html>
