@@ -4,12 +4,12 @@ title: 年份归档
 permalink: /archive/
 ---
 
-<h2>年份归档</h2>
-
-<!-- 新增：全站文章总计篇数 -->
-<p style="color: var(--muted-color); font-size: 0.95rem; margin-top: -5px; margin-bottom: 25px;">
-  全站共计 <strong>{{ site.posts.size }}</strong> 篇文章
-</p>
+<h2>
+  年份归档
+  <span style="font-size: 0.9rem; font-weight: normal; color: var(--muted-color); margin-left: 8px;">
+    （全站共计 {{ site.posts.size }} 篇）
+  </span>
+</h2>
 
 {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
 
