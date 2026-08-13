@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "GitHubPages和Jekyll静态博客极简SEO优化指南"
-date: 2026-08-14
+title: "Jekyll+GitHub Pages的Google SEO优化"
+date: 2026-08-13
 categories: 代码
 ---
 
