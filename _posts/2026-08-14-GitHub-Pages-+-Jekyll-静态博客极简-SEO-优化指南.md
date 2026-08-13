@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "GitHub Pages + Jekyll 静态博客极简 SEO 优化指南"
+title: "GitHub Pages+Jekyll 静态博客极简 SEO 优化指南"
 date: 2026-08-14
 categories: 代码
 ---
