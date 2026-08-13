@@ -4,6 +4,19 @@ title: 分类归档
 permalink: /categories/
 ---
 
+<style>
+  /* 分类归档专属的紧凑列表排版 */
+  .category-posts .post-item {
+    padding: 6px 0; /* 相比首页的 12px，缩减一半上下边距，更显紧凑 */
+  }
+  .category-posts .post-index {
+    font-family: var(--font-mono);
+    color: var(--muted-color);
+    font-size: 0.85rem;
+    min-width: 32px; /* 容纳数字序号标签 */
+  }
+</style>
+
 <h2 id="category-title">分类归档</h2>
 
 <div class="category-posts">
@@ -69,18 +82,25 @@ permalink: /categories/
 
       var allCatHtml = '';
       for (var cat in categoryData) {
-        // 保持与年份归档一致的标题格式："分类名 (X 篇)"
-        allCatHtml += '<div style="margin-bottom: 30px;">' +
-                        '<h3><a href="#' + encodeURIComponent(cat) + '" onclick="setTimeout(renderCategoryPage, 50)">' + cat + ' (' + categoryData[cat].length + ' 篇)</a></h3>' +
+        var catPosts = categoryData[cat];
+        allCatHtml += '<div style="margin-bottom: 25px;">' +
+                        '<h3><a href="#' + encodeURIComponent(cat) + '" onclick="setTimeout(renderCategoryPage, 50)">' + cat + ' (' + catPosts.length + ' 篇)</a></h3>' +
                         '<ul class="post-list">';
-        categoryData[cat].slice(0, 5).forEach(function(post) {
+        
+        // 预览前 5 篇，带分类内序号
+        catPosts.slice(0, 5).forEach(function(post, index) {
+          var seq = (index + 1 < 10 ? '0' : '') + (index + 1);
           allCatHtml += '<li class="post-item">' +
-                          '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                          '<div class="post-left">' +
+                            '<span class="post-index">' + seq + '</span>' +
+                            '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                          '</div>' +
                           '<span class="post-date">' + post.date + '</span>' +
                         '</li>';
         });
-        if (categoryData[cat].length > 5) {
-          allCatHtml += '<li class="post-item" style="color:var(--muted-color); font-size:0.85rem; padding: 6px 0;">...更多文章请点击分类标题</li>';
+
+        if (catPosts.length > 5) {
+          allCatHtml += '<li class="post-item" style="color:var(--muted-color); font-size:0.85rem; padding: 4px 0;">...更多文章请点击分类标题</li>';
         }
         allCatHtml += '</ul></div>';
       }
@@ -93,12 +113,12 @@ permalink: /categories/
     var totalPosts = posts.length;
     var totalPages = Math.ceil(totalPosts / pageSize) || 1;
 
-    // 交互边界保护：若输入的页码超出最大页数，自动修正跳转到最后一页
+    // 边界保护：若输入的页码超出最大页数，自动修正跳转到最后一页
     if (currentPage > totalPages) {
       currentPage = totalPages;
     }
 
-    // 核心修改：在顶部标题处展示与年份归档完全一致的格式 "分类名 (X 篇)"
+    // 顶部显示："分类名 (X 篇)"
     titleEl.textContent = currentCat + ' (' + totalPosts + ' 篇)';
 
     // 截取 30 篇展示
@@ -107,15 +127,22 @@ permalink: /categories/
     var pagePosts = posts.slice(startIndex, endIndex);
 
     var listHtml = '';
-    pagePosts.forEach(function(post) {
+    pagePosts.forEach(function(post, idx) {
+      // 计算当前分类下的独立序号（从 01 开始计算）
+      var globalSeq = startIndex + idx + 1;
+      var seqStr = (globalSeq < 10 ? '0' : '') + globalSeq;
+
       listHtml += '<li class="post-item">' +
-                    '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                    '<div class="post-left">' +
+                      '<span class="post-index">' + seqStr + '</span>' +
+                      '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
+                    '</div>' +
                     '<span class="post-date">' + post.date + '</span>' +
                   '</li>';
     });
     listContainer.innerHTML = listHtml;
 
-    // 渲染分页组件
+    // 渲染分页组件（超过 30 篇时渲染）
     if (totalPages <= 1) {
       paginationContainer.style.display = 'none';
       return;
