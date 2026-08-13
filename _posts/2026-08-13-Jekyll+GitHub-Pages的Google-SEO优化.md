@@ -34,6 +34,8 @@ plugins:
 
 打开你的布局文件（如 `_layouts/default.html`），在 `<head>` 标签内部补充以下标准代码：
 
+{% raw %}
+
 HTML
 
 ```
@@ -55,6 +57,8 @@ HTML
   <link rel="canonical" href="{{ page.url | absolute_url }}">
 </head>
 ```
+
+{% endraw %}
 
 ## 三、 创建 `robots.txt` 爬虫指引文件
 
@@ -88,4 +92,8 @@ Sitemap: [https://your-domain.com/sitemap.xml](https://your-domain.com/sitemap.x
 
 完成上述四步后，无需再为 SEO 耗费额外精力。
 
-Jekyll 生成的纯静态 HTML 网页结构优雅、无阻碍加载的垃圾脚本、访问响应迅速，天然契合搜索引擎的偏好。今后只需专注于 Markdown 文章的创作，GitHub Pages 每次部署均会自动更新站点地图并完成收录巡检。`本文使用谷歌 AI 生成`
+Jekyll 生成的纯静态 HTML 网页结构优雅、无阻碍加载的垃圾脚本、访问响应迅速，天然契合搜索引擎的偏好。今后只需专注于 Markdown 文章的创作，GitHub Pages 每次部署均会自动更新站点地图并完成收录巡检。
+
+```
+本文使用谷歌 AI 生成
+```
