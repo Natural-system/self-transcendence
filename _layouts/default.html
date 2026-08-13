@@ -5,40 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   
-  <style>
-  /* 单行内联代码样式 */
-  p code, li code {
-    background-color: #f0f0f0;  /* 浅灰背景 */
-    color: #d63384;            /* 醒目的红紫色文字 */
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: "Consolas", "Courier New", monospace;
-    font-size: 0.9em;
-  }
-
-  /* 多行独立代码块样式（黑色背景高亮框） */
-  pre {
-    background-color: #1e1e1e !important; /* 酷炫深黑/暗灰背景 */
-    color: #d4d4d4 !important;           /* 浅灰/白色代码文字 */
-    padding: 14px 18px;
-    border-radius: 8px;
-    overflow-x: auto;                     /* 代码太长时自动显示横向滚动条 */
-    font-family: "Consolas", "Fira Code", "Courier New", monospace;
-    font-size: 14px;
-    line-height: 1.6;
-    margin: 1.5em 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 淡淡的阴影，更有质感 */
-  }
-
-  /* 消除嵌套 code 标签的冲突背景 */
-  pre code {
-    background-color: transparent !important;
-    color: inherit !important;
-    padding: 0;
-    border-radius: 0;
-  }
-  </style>
-
   
   <!-- 新增：SEO 描述与关键词 -->
   <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 150 | default: site.description }}">
