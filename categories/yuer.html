@@ -1,9 +1,15 @@
 ---
 layout: default
-title: 首页
+title: 育儿
+pagination:
+  enabled: true
+  category: 育儿
+  per_page: 30
+  permalink: '/categories/育儿/page/:num/'
 ---
 
 <div class="home-posts">
+  <h2 class="category-title">育儿</h2>
   <ul class="post-list">
     {% for post in paginator.posts %}
       <li class="post-item">
@@ -17,5 +23,15 @@ title: 首页
   </ul>
 </div>
 
-<!-- 分页导航 -->
 {% include pagination.html %}
+
+<style>
+  .category-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--muted-color, #8c8c8c);
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color, #eaeaea);
+  }
+</style>

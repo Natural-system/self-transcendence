@@ -1,21 +1,24 @@
-title: Self-Transcendence
-email: lb@zasv.com
-description: >-
-  自豪的说，拥有一个高度健全+高度整合的人格，是非常幸运的事
+# ============================================
+# 分页配置 (jekyll-paginate-v2)
+# ============================================
+pagination:
+  enabled: true
+  per_page: 30
+  permalink: '/page/:num/'
+  title_suffix: ' - 第 :num 页'
+  limit: 0
+  sort_field: 'date'
+  sort_reverse: true
 
-# 核心修正：指定 GitHub Pages 的二级目录路径与域名
-baseurl: "/self-transcendence"
-url: "https://Natural-system.github.io"
-
-# 核心修正：禁用 GitHub Pages 默认官方主题，允许加载自定义模板
-theme: jekyll-theme-primer # 强制忽略
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-
-markdown: kramdown
-
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - blog-template.md
+# 自动分页：为每个分类生成独立分页
+autopages:
+  enabled: true
+  categories:
+    enabled: true
+    layouts:
+      - 'category.html'
+    title: ':cat 分类'
+    permalink: '/categories/:cat/'
+    slugify:
+      mode: 'default'
+      cased: true
