@@ -13,14 +13,38 @@ permalink: /archive/
 
 {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
 
-{% for year_group in posts_by_year %}
-  <h3 id="year-{{ year_group.name }}">{{ year_group.name }} 年 ({{ year_group.items | size }} 篇)</h3>
-  <ul>
-    {% for post in year_group.items %}
-      <li>
-        <span class="post-date">{{ post.date | date: "%m-%d" }}</span> - 
-        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-      </li>
-    {% endfor %}
-  </ul>
-{% endfor %}
+<div class="archive-year-wrapper">
+  {% for year_group in posts_by_year %}
+    {% assign total_count = year_group.items | size %}
+    {% assign remaining_count = total_count | minus: 10 %}
+
+    <div class="year-block">
+      <h3 id="year-{{ year_group.name }}">{{ year_group.name }} 年 ({{ total_count }} 篇)</h3>
+      
+      {% if total_count > 10 %}
+        <!-- 纯 CSS 控制开关（隐藏） -->
+        <input type="checkbox" id="toggle-year-{{ year_group.name }}" class="year-toggle-checkbox">
+      {% endif %}
+
+      <ul class="post-list">
+        {% for post in year_group.items %}
+          <!-- 前 10 篇正常显示，第 11 篇起加上 class="more-post" 用于隐藏 -->
+          <li class="post-item {% if forloop.index > 10 %}more-post{% endif %}">
+            <div class="post-left">
+              <span class="post-index">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+              <a class="post-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            </div>
+            <span class="post-date">{{ post.date | date: "%m-%d" }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if total_count > 10 %}
+        <!-- 展开按钮：关联单选框 -->
+        <label for="toggle-year-{{ year_group.name }}" class="btn-show-more">
+          剩余 {{ remaining_count }} 篇文章，点击展示 ↓
+        </label>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

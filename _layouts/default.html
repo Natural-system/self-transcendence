@@ -301,6 +301,48 @@
     .pagination-jump input:focus {
       border-color: var(--accent-color);
     }
+    /* --- 年份归档纯 CSS 折叠控制 --- */
+
+/* 隐藏用于状态切换的 checkbox */
+.year-toggle-checkbox {
+  display: none;
+}
+
+/* 默认状态：隐藏第 10 篇以后的文章 */
+.year-block .post-list .more-post {
+  display: none;
+}
+
+/* 展开按钮基础样式 (遵从网站极简与 muted-color 风格) */
+.btn-show-more {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  color: var(--muted-color);
+  background-color: transparent;
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: #f4f4f0;
+  }
+}
+
+/* 核心逻辑 (状态 A)：当复选框被选中时 */
+/* 1. 展示第 11 篇及以后的文章 */
+.year-toggle-checkbox:checked ~ .post-list .more-post {
+  display: flex !important; /* 恢复为与 post-item 一致的 flex 布局 */
+}
+
+/* 2. 展开后，底部的折叠按钮直接隐藏 (消失) */
+.year-toggle-checkbox:checked ~ .btn-show-more {
+  display: none !important;
+}
   </style>
 </head>
 <body>
