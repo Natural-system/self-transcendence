@@ -1,0 +1,32 @@
+---
+layout: default
+---
+
+<article class="article-container" style="max-width: 800px; margin: 0 auto;">
+  <header class="article-header">
+    <h1 class="article-title">{{ page.title }}</h1>
+    <div class="meta-info">
+      {% if page.date %}
+        发布日期：{{ page.date | date: "%Y-%m-%d" }} &nbsp;|&nbsp; 
+      {% endif %}
+      分类：{{ page.category | default: "独立页面" }} &nbsp;|&nbsp; 
+      字数：{{ content | strip_html | strip_newlines | size }} 字 &nbsp;|&nbsp;
+      预计阅读：{{ content | strip_html | strip_newlines | size | divided_by: 500 | plus: 1 }} 分钟
+    </div>
+  </header>
+
+  <div class="article-body js-article-body">
+    {{ content }}
+  </div>
+
+  <!-- Utterances 评论区系统 -->
+  <div class="article-comments" style="margin-top: 3rem;">
+    <script src="https://utteranc.es/client.js"
+            repo="Natural-system/self-transcendence"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+    </script>
+  </div>
+</article>

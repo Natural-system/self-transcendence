@@ -1,7 +1,11 @@
 ---
-layout: default
+​---
+layout: about
 title: 关于
 permalink: /about/
+date: 2026-08-11
+category: 其他
+​---
 ---
 
 ## 关于这个网站
