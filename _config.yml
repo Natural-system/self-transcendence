@@ -5,13 +5,15 @@ description: >-
 
 # 核心修正：指定 GitHub Pages 的二级目录路径与域名
 baseurl: "/self-transcendence"
-url: "https://Natural-system.github.io"
+url: "https://natural-system.github.io"
 
-# 核心修正：禁用 GitHub Pages 默认官方主题，允许加载自定义模板
-theme: jekyll-theme-primer # 强制忽略
+# 核心修正：禁用默认主题，完全使用本地自定义模板 (_layouts)
+# theme: jekyll-theme-primer
+
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
+  - jekyll-sitemap
 
 markdown: kramdown
 

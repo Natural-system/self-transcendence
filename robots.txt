@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://natural-system.github.io/self-transcendence/sitemap.xml

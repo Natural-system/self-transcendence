@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   
+  <!-- 新增：SEO 描述与关键词 -->
+  <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 150 | default: site.description }}">
+  
+  <!-- 新增：Open Graph 标签（方便微信、Twitter、Telegram 转发时显示卡片标题和简介） -->
+  <meta property="og:title" content="{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}">
+  <meta property="og:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 150 | default: site.description }}">
+  <meta property="og:type" content="{% if page.title %}article{% else %}website{% endif %}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+
+  <!-- 新增：规范链接（防止重复内容被谷歌惩罚） -->
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+    
   <style>
     :root {
       --bg-color: #fbfbf9;
@@ -409,6 +421,7 @@
   opacity: 1;
 }
   </style>
+
 </head>
 <body>
 
@@ -439,6 +452,7 @@
           <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
         </div>
       </nav>
+      
     </header>
 
     <main>
