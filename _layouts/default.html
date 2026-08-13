@@ -388,6 +388,26 @@
       max-height: 70vh;
       overflow-y: auto;
     }
+    /* ========================================== */
+/* --- 年份归档：第 9、10 篇未展开时的渐隐效果 --- */
+/* ========================================== */
+
+/* 只有当存在折叠开关（即文章数 > 10）且未被勾选时触发 */
+.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
+  opacity: 0.65; /* 65% 透明度，稍微变浅 */
+  transition: opacity 0.3s ease;
+}
+
+.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
+  opacity: 0.35; /* 35% 透明度，明显变浅 */
+  transition: opacity 0.3s ease;
+}
+
+/* 鼠标悬停在第 9、10 篇时，临时恢复清晰，方便读者临时阅读标题 */
+.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9):hover,
+.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10):hover {
+  opacity: 1;
+}
   </style>
 </head>
 <body>
