@@ -62,13 +62,14 @@ permalink: /categories/
     var listContainer = document.getElementById('category-post-list');
     var paginationContainer = document.getElementById('category-pagination');
 
-    // 情况 A：未指定 Hash 分类，渲染全部分类简表（不做分页，供总览）
+    // 情况 A：未指定 Hash 分类，渲染全部分类总览
     if (!currentCat || !categoryData[currentCat]) {
-      titleEl.textContent = '全部分类归档';
+      titleEl.textContent = '分类归档';
       paginationContainer.style.display = 'none';
 
       var allCatHtml = '';
       for (var cat in categoryData) {
+        // 保持与年份归档一致的标题格式："分类名 (X 篇)"
         allCatHtml += '<div style="margin-bottom: 30px;">' +
                         '<h3><a href="#' + encodeURIComponent(cat) + '" onclick="setTimeout(renderCategoryPage, 50)">' + cat + ' (' + categoryData[cat].length + ' 篇)</a></h3>' +
                         '<ul class="post-list">';
@@ -97,6 +98,7 @@ permalink: /categories/
       currentPage = totalPages;
     }
 
+    // 核心修改：在顶部标题处展示与年份归档完全一致的格式 "分类名 (X 篇)"
     titleEl.textContent = currentCat + ' (' + totalPosts + ' 篇)';
 
     // 截取 30 篇展示
@@ -166,7 +168,6 @@ permalink: /categories/
     if (isNaN(val) || val < 1) {
       val = 1;
     }
-    // 超出最大页码时自动修正到末页
     if (val > totalPages) {
       val = totalPages;
     }
