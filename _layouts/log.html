@@ -1,0 +1,115 @@
+---
+layout: default
+---
+
+<style>
+  .log-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .log-timeline {
+    position: relative;
+    padding-left: 20px;
+    margin-top: 30px;
+    border-left: 2px solid var(--border-color);
+  }
+
+  .log-item {
+    position: relative;
+    margin-bottom: 35px;
+  }
+
+  /* 时间轴上的小圆点 */
+  .log-item::before {
+    content: "";
+    position: absolute;
+    left: -26px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--accent-color);
+    border: 2px solid var(--bg-color);
+  }
+
+  /* 自动解析出的日期样式 */
+  .log-item h3 {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--muted-color);
+    margin: 0 0 8px 0;
+    padding: 0;
+    border: none;
+  }
+
+  /* 日志正文 */
+  .log-item p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin: 0 0 10px 0;
+  }
+  .log-item p:last-child {
+    margin-bottom: 0;
+  }
+</style>
+
+<div class="log-container">
+  <header class="article-header">
+    <h1 class="article-title">{{ page.title }}</h1>
+    <div class="meta-info">
+      记录日常的随感、微语与碎片思考 · 倒序排列
+    </div>
+  </header>
+
+  <!-- 日志时间轴容器 -->
+  <div class="log-timeline" id="log-timeline-box">
+    <!-- 接收来自于 log.md 的纯 Markdown 编译结果 -->
+    <div id="raw-log-content" style="display: none;">
+      {{ content }}
+    </div>
+  </div>
+
+  <!-- Utterances 评论区系统 -->
+  <div class="article-comments" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+    <script src="https://utteranc.es/client.js"
+            repo="Natural-system/self-transcendence"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+    </script>
+  </div>
+</div>
+
+<!-- 自动将 Markdown 中的 <h3> 解析成时间轴小卡片 -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var rawEl = document.getElementById('raw-log-content');
+    var timelineBox = document.getElementById('log-timeline-box');
+    
+    if (!rawEl || !timelineBox) return;
+
+    var logNodes = Array.from(rawEl.children);
+    var currentItem = null;
+
+    logNodes.forEach(function(node) {
+      if (node.tagName.toLowerCase() === 'h3') {
+        if (currentItem) {
+          timelineBox.appendChild(currentItem);
+        }
+        currentItem = document.createElement('div');
+        currentItem.className = 'log-item';
+        currentItem.appendChild(node);
+      } else if (currentItem) {
+        currentItem.appendChild(node);
+      }
+    });
+
+    if (currentItem) {
+      timelineBox.appendChild(currentItem);
+    }
+  });
+</script>
