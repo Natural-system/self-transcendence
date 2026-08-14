@@ -13,8 +13,8 @@ layout: default
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--text-color);
-    margin: 40px 0 20px 0;
-    padding-bottom: 8px;
+    margin: 40px 0 15px 0;
+    padding-bottom: 6px;
     border-bottom: 2px solid var(--accent-color);
     letter-spacing: 0.5px;
   }
@@ -22,18 +22,30 @@ layout: default
     margin-top: 10px;
   }
 
-  /* --- 2. 时间轴容器 --- */
+  /* --- 2. 月份中标题样式 (## 08 月) --- */
+  .log-month-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0.85;
+    margin: 25px 0 12px 0;
+    padding-left: 4px;
+    border-left: 3px solid var(--muted-color);
+    line-height: 1.2;
+  }
+
+  /* --- 3. 时间轴容器 --- */
   .log-timeline {
     position: relative;
     padding-left: 18px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-left: 2px solid var(--border-color);
   }
 
-  /* --- 3. 紧凑型日志条目 --- */
+  /* --- 4. 紧凑型日志条目 (### 08-14) --- */
   .log-item {
     position: relative;
-    margin-bottom: 20px; /* 缩减条目间距 (原本 35px) */
+    margin-bottom: 20px; /* 紧凑条目间距 */
   }
 
   /* 时间轴悬挂小圆点 */
@@ -49,7 +61,7 @@ layout: default
     border: 2px solid var(--bg-color);
   }
 
-  /* 日期/月份标题 (### 08-14) --- 紧凑排版 */
+  /* 具体日期标题 */
   .log-item h3 {
     font-family: var(--font-mono);
     font-size: 0.9rem;
@@ -61,18 +73,18 @@ layout: default
     line-height: 1.3;
   }
 
-  /* 日志正文 --- 缩减行距与段落边距 */
+  /* 日志正文 --- 紧凑行距与段落 */
   .log-item p {
     font-size: 0.95rem;
-    line-height: 1.55; /* 精简行高 (原本 1.8) */
+    line-height: 1.55; /* 精简行高 */
     color: var(--text-color);
-    margin: 0 0 4px 0;  /* 缩减段落间距 (原本 10px) */
+    margin: 0 0 4px 0;  /* 缩减段落间距 */
   }
   .log-item p:last-child {
     margin-bottom: 0;
   }
 
-  /* --- 4. 懒加载/加载更多按钮样式 --- */
+  /* --- 5. 懒加载按钮样式 --- */
   .log-load-more-wrapper {
     text-align: center;
     margin: 30px 0 10px 0;
@@ -116,7 +128,7 @@ layout: default
     </button>
   </div>
 
-  <!-- 隐藏原始 Markdown HTML 内容以供脚本解析 -->
+  <!-- 隐藏原始 Markdown HTML 内容供脚本解析 -->
   <div id="raw-log-content" style="display: none;">
     {{ content }}
   </div>
@@ -133,11 +145,11 @@ layout: default
   </div>
 </div>
 
-<!-- 分层解析 + 懒加载渲染脚本 -->
+<!-- 三级层级解析 + 懒加载渲染脚本 -->
 <script>
-  var allLogGroups = []; // 存储解析后的所有组（年份或日志条目）
+  var allLogGroups = []; // 存储解析后的所有组（年份、月份或日志条目）
   var currentIndex = 0;
-  var BATCH_SIZE = 25;   /* 每次加载 25 条日志，确保极速首屏 */
+  var BATCH_SIZE = 25;   /* 每次加载 25 条日志 */
 
   document.addEventListener("DOMContentLoaded", function() {
     var rawEl = document.getElementById('raw-log-content');
@@ -150,15 +162,23 @@ layout: default
     nodes.forEach(function(node) {
       var tag = node.tagName.toLowerCase();
 
-      // 解析 # 2026 年 或 ## 2026 年 为年份大标题
-      if (tag === 'h1' || tag === 'h2') {
+      // 1. 解析 # 2026 年 为年份大标题
+      if (tag === 'h1') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
           currentItem = null;
         }
         allLogGroups.push({ type: 'year', node: node });
       } 
-      // 解析 ### 08-14 为具体日志条目
+      // 2. 解析 ## 08 月 为月份中标题
+      else if (tag === 'h2') {
+        if (currentItem) {
+          allLogGroups.push({ type: 'item', node: currentItem });
+          currentItem = null;
+        }
+        allLogGroups.push({ type: 'month', node: node });
+      }
+      // 3. 解析 ### 08-14 为具体日志条目
       else if (tag === 'h3') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -176,7 +196,7 @@ layout: default
       allLogGroups.push({ type: 'item', node: currentItem });
     }
 
-    // 初始渲染第一批
+    // 初始加载第一批
     loadNextBatch();
   });
 
@@ -192,17 +212,23 @@ layout: default
       var group = allLogGroups[currentIndex];
 
       if (group.type === 'year') {
-        // 创建年份大标题
         var yearDiv = document.createElement('div');
         yearDiv.className = 'log-year-title';
         yearDiv.innerHTML = group.node.innerHTML;
         wrapper.appendChild(yearDiv);
+        activeTimeline = null; // 重置时间轴容器
+      } 
+      else if (group.type === 'month') {
+        var monthDiv = document.createElement('div');
+        monthDiv.className = 'log-month-title';
+        monthDiv.innerHTML = group.node.innerHTML;
+        wrapper.appendChild(monthDiv);
 
-        // 创建该年份下的时间轴容器
+        // 为该月份创建单独的时间轴容器
         activeTimeline = document.createElement('div');
         activeTimeline.className = 'log-timeline';
         wrapper.appendChild(activeTimeline);
-      } 
+      }
       else if (group.type === 'item') {
         if (!activeTimeline) {
           activeTimeline = document.createElement('div');
@@ -216,7 +242,7 @@ layout: default
       currentIndex++;
     }
 
-    // 更新“加载更多”按钮状态
+    // 更新懒加载按钮状态
     var totalItems = allLogGroups.filter(g => g.type === 'item').length;
     var currentRenderedItems = wrapper.querySelectorAll('.log-item').length;
     var remaining = totalItems - currentRenderedItems;
