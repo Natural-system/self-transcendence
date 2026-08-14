@@ -7,52 +7,94 @@ layout: default
     max-width: 800px;
     margin: 0 auto;
   }
-  
+
+  /* --- 1. 年份大标题样式 (# 2026 年) --- */
+  .log-year-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 40px 0 20px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-color);
+    letter-spacing: 0.5px;
+  }
+  .log-year-title:first-child {
+    margin-top: 10px;
+  }
+
+  /* --- 2. 时间轴容器 --- */
   .log-timeline {
     position: relative;
-    padding-left: 20px;
-    margin-top: 30px;
+    padding-left: 18px;
+    margin-bottom: 20px;
     border-left: 2px solid var(--border-color);
   }
 
+  /* --- 3. 紧凑型日志条目 --- */
   .log-item {
     position: relative;
-    margin-bottom: 35px;
+    margin-bottom: 20px; /* 缩减条目间距 (原本 35px) */
   }
 
-  /* 时间轴上的小圆点 */
+  /* 时间轴悬挂小圆点 */
   .log-item::before {
     content: "";
     position: absolute;
-    left: -26px;
-    top: 6px;
-    width: 10px;
-    height: 10px;
+    left: -23px;
+    top: 5px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background-color: var(--accent-color);
     border: 2px solid var(--bg-color);
   }
 
-  /* 自动解析出的日期样式 */
+  /* 日期/月份标题 (### 08-14) --- 紧凑排版 */
   .log-item h3 {
     font-family: var(--font-mono);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--muted-color);
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0; /* 缩减日期与正文间距 */
     padding: 0;
     border: none;
+    line-height: 1.3;
   }
 
-  /* 日志正文 */
+  /* 日志正文 --- 缩减行距与段落边距 */
   .log-item p {
-    font-size: 1rem;
-    line-height: 1.8;
+    font-size: 0.95rem;
+    line-height: 1.55; /* 精简行高 (原本 1.8) */
     color: var(--text-color);
-    margin: 0 0 10px 0;
+    margin: 0 0 4px 0;  /* 缩减段落间距 (原本 10px) */
   }
   .log-item p:last-child {
     margin-bottom: 0;
+  }
+
+  /* --- 4. 懒加载/加载更多按钮样式 --- */
+  .log-load-more-wrapper {
+    text-align: center;
+    margin: 30px 0 10px 0;
+  }
+  .btn-log-load-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 24px;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    color: var(--text-color);
+    background-color: #f0f0ec;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-log-load-more:hover {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
   }
 </style>
 
@@ -60,20 +102,27 @@ layout: default
   <header class="article-header">
     <h1 class="article-title">{{ page.title }}</h1>
     <div class="meta-info">
-      记录日常的随感、微语与碎片思考 · 倒序排列
+      记录日常随感与碎片思考 · 倒序排列
     </div>
   </header>
 
-  <!-- 日志时间轴容器 -->
-  <div class="log-timeline" id="log-timeline-box">
-    <!-- 接收来自于 log.md 的纯 Markdown 编译结果 -->
-    <div id="raw-log-content" style="display: none;">
-      {{ content }}
-    </div>
+  <!-- 渲染后的日志容器 -->
+  <div id="rendered-log-wrapper"></div>
+
+  <!-- 懒加载控制按钮 -->
+  <div class="log-load-more-wrapper" id="load-more-box" style="display: none;">
+    <button class="btn-log-load-more" onclick="loadNextBatch()">
+      加载更多历史日志 <span id="remaining-count-tag"></span>
+    </button>
+  </div>
+
+  <!-- 隐藏原始 Markdown HTML 内容以供脚本解析 -->
+  <div id="raw-log-content" style="display: none;">
+    {{ content }}
   </div>
 
   <!-- Utterances 评论区系统 -->
-  <div class="article-comments" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+  <div class="article-comments" style="margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
     <script src="https://utteranc.es/client.js"
             repo="Natural-system/self-transcendence"
             issue-term="pathname"
@@ -84,32 +133,99 @@ layout: default
   </div>
 </div>
 
-<!-- 自动将 Markdown 中的 <h3> 解析成时间轴小卡片 -->
+<!-- 分层解析 + 懒加载渲染脚本 -->
 <script>
+  var allLogGroups = []; // 存储解析后的所有组（年份或日志条目）
+  var currentIndex = 0;
+  var BATCH_SIZE = 25;   /* 每次加载 25 条日志，确保极速首屏 */
+
   document.addEventListener("DOMContentLoaded", function() {
     var rawEl = document.getElementById('raw-log-content');
-    var timelineBox = document.getElementById('log-timeline-box');
-    
-    if (!rawEl || !timelineBox) return;
+    var wrapper = document.getElementById('rendered-log-wrapper');
+    if (!rawEl || !wrapper) return;
 
-    var logNodes = Array.from(rawEl.children);
+    var nodes = Array.from(rawEl.children);
     var currentItem = null;
 
-    logNodes.forEach(function(node) {
-      if (node.tagName.toLowerCase() === 'h3') {
+    nodes.forEach(function(node) {
+      var tag = node.tagName.toLowerCase();
+
+      // 解析 # 2026 年 或 ## 2026 年 为年份大标题
+      if (tag === 'h1' || tag === 'h2') {
         if (currentItem) {
-          timelineBox.appendChild(currentItem);
+          allLogGroups.push({ type: 'item', node: currentItem });
+          currentItem = null;
+        }
+        allLogGroups.push({ type: 'year', node: node });
+      } 
+      // 解析 ### 08-14 为具体日志条目
+      else if (tag === 'h3') {
+        if (currentItem) {
+          allLogGroups.push({ type: 'item', node: currentItem });
         }
         currentItem = document.createElement('div');
         currentItem.className = 'log-item';
         currentItem.appendChild(node);
-      } else if (currentItem) {
+      } 
+      else if (currentItem) {
         currentItem.appendChild(node);
       }
     });
 
     if (currentItem) {
-      timelineBox.appendChild(currentItem);
+      allLogGroups.push({ type: 'item', node: currentItem });
     }
+
+    // 初始渲染第一批
+    loadNextBatch();
   });
+
+  function loadNextBatch() {
+    var wrapper = document.getElementById('rendered-log-wrapper');
+    var loadMoreBox = document.getElementById('load-more-box');
+    var countTag = document.getElementById('remaining-count-tag');
+
+    var renderedItemsCount = 0;
+    var activeTimeline = wrapper.querySelector('.log-timeline:last-child');
+
+    while (currentIndex < allLogGroups.length && renderedItemsCount < BATCH_SIZE) {
+      var group = allLogGroups[currentIndex];
+
+      if (group.type === 'year') {
+        // 创建年份大标题
+        var yearDiv = document.createElement('div');
+        yearDiv.className = 'log-year-title';
+        yearDiv.innerHTML = group.node.innerHTML;
+        wrapper.appendChild(yearDiv);
+
+        // 创建该年份下的时间轴容器
+        activeTimeline = document.createElement('div');
+        activeTimeline.className = 'log-timeline';
+        wrapper.appendChild(activeTimeline);
+      } 
+      else if (group.type === 'item') {
+        if (!activeTimeline) {
+          activeTimeline = document.createElement('div');
+          activeTimeline.className = 'log-timeline';
+          wrapper.appendChild(activeTimeline);
+        }
+        activeTimeline.appendChild(group.node);
+        renderedItemsCount++;
+      }
+
+      currentIndex++;
+    }
+
+    // 更新“加载更多”按钮状态
+    var totalItems = allLogGroups.filter(g => g.type === 'item').length;
+    var currentRenderedItems = wrapper.querySelectorAll('.log-item').length;
+    var remaining = totalItems - currentRenderedItems;
+
+    if (remaining > 0) {
+      loadMoreBox.style.display = 'block';
+      countTag.textContent = '(剩余 ' + remaining + ' 条)';
+    } else {
+      loadMoreBox.style.display = 'none';
+    }
+  }
 </script>
