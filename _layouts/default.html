@@ -52,13 +52,14 @@
     }
 
     /* ========================================== */
-    /* --- 2. 通用深色代码块样式 (源头彻底防撑爆) --- */
+    /* --- 2. 通用深色代码块样式 (源头彻底防撑爆 + 支持复制按钮定位) --- */
     /* ========================================== */
     /* Jekyll 生成的代码块外层容器兼容覆盖 */
     .highlight, 
     figure.highlight, 
     div.highlighter-rouge, 
     .highlighter-rouge div.highlight {
+      position: relative !important;     /* 必须相对定位，用于放置右上角复制按钮 */
       max-width: 100% !important;
       min-width: 0 !important;
       overflow-x: auto !important;
@@ -67,9 +68,10 @@
     }
 
     pre {
+      position: relative !important;     /* 必须相对定位 */
       background-color: #1e1e1e !important; /* 暗黑背景色 */
       color: #9cdcfe !important;           /* 默认浅蓝代码文字 */
-      padding: 14px 18px;
+      padding: 16px 18px 14px 18px;
       border-radius: 8px;
       font-family: var(--font-mono);       /* 使用等宽字体变量 */
       font-size: 14px;
@@ -98,6 +100,42 @@
       font-family: var(--font-mono);
       font-size: 0.9em;
       word-break: break-word;
+    }
+
+    /* 代码块右上角一键复制按钮样式 */
+    .copy-code-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 10;
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #d4d4d4;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+      user-select: none;
+    }
+
+    /* 鼠标悬停在代码块上时显示复制按钮 */
+    .highlight:hover .copy-code-button,
+    pre:hover .copy-code-button {
+      opacity: 1;
+    }
+
+    .copy-code-button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+    }
+
+    .copy-code-button.copied {
+      background-color: #28a745 !important;
+      color: #ffffff !important;
+      border-color: #28a745 !important;
     }
 
     /* 限制文章正文防撑爆保底 */
@@ -515,7 +553,7 @@
   <!-- 全局搜索弹窗组件 -->
   <div id="search-modal-overlay" onclick="closeSearchModal(event)">
     <div class="search-modal-content" onclick="event.stopPropagation()">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
+      <div style="display:flex; justify-scale:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
         <h3 style="margin:0; font-size: 1.05rem; color:#333;">搜索结果</h3>
         <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.4rem; color:#888; line-height: 1;">&times;</span>
       </div>
@@ -596,6 +634,48 @@
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeSearchModalDirect();
+    });
+
+    // 3. 代码块一键复制功能注入
+    document.addEventListener('DOMContentLoaded', function() {
+      // 查找页面上的所有代码块容器（兼容各种 Jekyll 高亮标签结构）
+      var codeBlocks = document.querySelectorAll('pre');
+
+      codeBlocks.forEach(function(pre) {
+        // 如果已经存在复制按钮，跳过
+        if (pre.querySelector('.copy-code-button')) return;
+
+        // 创建复制按钮
+        var btn = document.createElement('button');
+        btn.className = 'copy-code-button';
+        btn.type = 'button';
+        btn.innerText = '复制';
+
+        // 绑定点击事件
+        btn.addEventListener('click', function() {
+          var code = pre.querySelector('code');
+          var textToCopy = code ? code.innerText : pre.innerText;
+
+          navigator.clipboard.writeText(textToCopy).then(function() {
+            btn.innerText = '已复制!';
+            btn.classList.add('copied');
+            
+            setTimeout(function() {
+              btn.innerText = '复制';
+              btn.classList.remove('copied');
+            }, 2000);
+          }).catch(function(err) {
+            console.error('复制失败: ', err);
+            btn.innerText = '失败';
+            setTimeout(function() {
+              btn.innerText = '复制';
+            }, 2000);
+          });
+        });
+
+        // 将按钮插入到代码块中
+        pre.appendChild(btn);
+      });
     });
   </script>
 </body>
