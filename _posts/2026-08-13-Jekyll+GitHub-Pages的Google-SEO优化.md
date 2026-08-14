@@ -70,12 +70,14 @@ HTML
 
 Plaintext
 
-```
+````
+```text
 User-agent: *
 Allow: /
 
 Sitemap: [https://your-domain.com/sitemap.xml](https://your-domain.com/sitemap.xml)
 ```
+````
 
 ## 四、 主动向 Google Search Console 提交站点
 
