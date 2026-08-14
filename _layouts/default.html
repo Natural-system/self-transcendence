@@ -150,7 +150,29 @@
       max-width: 100%;
       height: auto;
     }
+    /* 文章正文表格样式 */
+    main table, article table {
+      width: 100%;
+      border-collapse: collapse;  /* 折叠边框，避免边框间间隙 */
+      margin: 1.5em 0;
+      font-size: 0.95rem;
+    }
 
+    main th, article th,
+    main td, article td {
+      padding: 8px 12px;
+      border: 1px solid var(--border-color); /* 使用你全局配置的浅灰边框色 */
+      text-align: left;
+    }
+
+    main th, article th {
+      background-color: #f0f0ec;            /* 表头浅灰背景 */
+      font-weight: 600;
+    }
+
+    main tr:nth-child(even), article tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.015); /* 偶数行微弱背景色，增加可读性 */
+    }
     /* ========================================== */
     /* --- 3. 页面基础布局样式 --- */
     /* ========================================== */
