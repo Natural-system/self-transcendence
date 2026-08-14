@@ -4,21 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-  
-  
-  <!-- 新增：SEO 描述与关键词 -->
+
+  <!-- SEO 描述与关键词 -->
   <meta name="description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 150 | default: site.description }}">
   
-  <!-- 新增：Open Graph 标签（方便微信、Twitter、Telegram 转发时显示卡片标题和简介） -->
+  <!-- Open Graph 标签（社交平台分享卡片） -->
   <meta property="og:title" content="{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}">
   <meta property="og:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 150 | default: site.description }}">
   <meta property="og:type" content="{% if page.title %}article{% else %}website{% endif %}">
   <meta property="og:url" content="{{ page.url | absolute_url }}">
 
-  <!-- 新增：规范链接（防止重复内容被谷歌惩罚） -->
+  <!-- 规范链接 -->
   <link rel="canonical" href="{{ page.url | absolute_url }}">
 
   <style>
+    /* ========================================== */
+    /* --- 1. 全局 CSS 变量配置 --- */
+    /* ========================================== */
     :root {
       --bg-color: #fbfbf9;
       --text-color: #2b2b2b;
@@ -26,7 +28,7 @@
       --border-color: #eaeaea;
       --accent-color: #000000;
       --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --font-mono: "SFMono-Regular", Consolas, "Fira Code", "Liberation Mono", Menlo, monospace;
     }
 
     body {
@@ -49,7 +51,52 @@
       text-decoration: underline;
     }
 
-    /* 顶部阅读进度条 */
+    /* ========================================== */
+    /* --- 2. 通用深色代码块样式 (防撑爆) --- */
+    /* ========================================== */
+    pre {
+      background-color: #1e1e1e !important; /* 暗黑背景色 */
+      color: #9cdcfe !important;           /* 默认浅蓝代码文字 */
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-family: var(--font-mono);       /* 使用等宽字体变量 */
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 1.5em 0;
+      max-width: 100% !important;
+      overflow-x: auto !important;          /* 超出时出现横向滚动条 */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    pre code {
+      background-color: transparent !important;
+      color: inherit !important;
+      padding: 0;
+    }
+
+    p code, li code {
+      background-color: #f0f0ec;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+    }
+
+    /* 限制文章正文防撑爆保底 */
+    main, article, .post-content {
+      max-width: 100%;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+
+    main img, article img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* ========================================== */
+    /* --- 3. 页面基础布局样式 --- */
+    /* ========================================== */
     .progress-container {
       position: fixed;
       top: 0;
@@ -66,14 +113,12 @@
       transition: width 0.1s ease-out;
     }
 
-    /* 主容器：固定最大宽度 */
     .container {
       max-width: 1000px;
       margin: 0 auto;
       padding: 40px 20px;
     }
 
-    /* 顶部页眉与导航 */
     header {
       margin-bottom: 50px;
       border-bottom: 1px solid var(--border-color);
@@ -92,7 +137,6 @@
       margin-bottom: 20px;
     }
 
-    /* 顶部导航栏 */
     nav.site-nav {
       display: flex;
       flex-wrap: wrap;
@@ -118,7 +162,6 @@
       text-decoration: none;
     }
 
-    /* 页头紧凑搜索框 */
     .nav-search-input {
       width: 130px;
       padding: 4px 10px;
@@ -134,7 +177,6 @@
       width: 160px;
     }
 
-    /* 统一的文章列表排版 */
     .post-list {
       list-style: none;
       padding: 0;
@@ -178,9 +220,7 @@
       white-space: nowrap;
     }
 
-    /* ========================================== */
-    /* --- 修复：双栏文章布局 (左侧目录，右侧正文) --- */
-    /* ========================================== */
+    /* 双栏文章布局 (左侧目录，右侧正文) */
     .layout-grid {
       display: grid;
       grid-template-columns: 240px 1fr;
@@ -248,7 +288,6 @@
       text-align: center;
     }
 
-    /* 通用分页导航 */
     .pagination {
       display: flex;
       flex-wrap: wrap;
@@ -317,11 +356,7 @@
       border-color: var(--accent-color);
     }
 
-
-    /* ========================================== */
-    /* --- 年份归档纯 CSS 折叠/收起控制 --- */
-    /* ========================================== */
-
+    /* 年份归档折叠控制 */
     .year-toggle-checkbox {
       display: none;
     }
@@ -375,10 +410,7 @@
       display: inline-flex !important;
     }
 
-    /* ========================================== */
-    /* --- 全局搜索弹窗样式 --- */
-    /* ========================================== */
-    
+    /* 全局搜索弹窗样式 */
     #search-modal-overlay {
       display: none;
       position: fixed;
@@ -401,28 +433,23 @@
       max-height: 70vh;
       overflow-y: auto;
     }
-    /* ========================================== */
-/* --- 年份归档：第 9、10 篇未展开时的渐隐效果 --- */
-/* ========================================== */
 
-/* 只有当存在折叠开关（即文章数 > 10）且未被勾选时触发 */
-.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
-  opacity: 0.65; /* 65% 透明度，稍微变浅 */
-  transition: opacity 0.3s ease;
-}
+    /* 年份归档未展开时的渐隐效果 */
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
+      opacity: 0.65;
+      transition: opacity 0.3s ease;
+    }
 
-.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
-  opacity: 0.35; /* 35% 透明度，明显变浅 */
-  transition: opacity 0.3s ease;
-}
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
+    }
 
-/* 鼠标悬停在第 9、10 篇时，临时恢复清晰，方便读者临时阅读标题 */
-.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9):hover,
-.year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10):hover {
-  opacity: 1;
-}
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9):hover,
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10):hover {
+      opacity: 1;
+    }
   </style>
-
 </head>
 <body>
 
@@ -453,7 +480,6 @@
           <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
         </div>
       </nav>
-      
     </header>
 
     <main>
