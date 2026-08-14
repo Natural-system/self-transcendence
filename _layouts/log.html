@@ -67,46 +67,30 @@ layout: default
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--muted-color);
-    margin: 0 0 4px 0; /* 缩减日期与正文间距 */
+    margin: 0 0 4px 0;
     padding: 0;
     border: none;
     line-height: 1.3;
   }
 
-  /* 日志正文 --- 紧凑行距与段落 */
+  /* 日志正文 */
   .log-item p {
     font-size: 0.95rem;
-    line-height: 1.55; /* 精简行高 */
+    line-height: 1.55;
     color: var(--text-color);
-    margin: 0 0 4px 0;  /* 缩减段落间距 */
+    margin: 0 0 4px 0;
   }
   .log-item p:last-child {
     margin-bottom: 0;
   }
 
-  /* --- 5. 懒加载按钮样式 --- */
-  .log-load-more-wrapper {
+  /* --- 5. 触底自动加载提示器 --- */
+  .log-infinite-scroll-trigger {
     text-align: center;
-    margin: 30px 0 10px 0;
-  }
-  .btn-log-load-more {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 24px;
+    padding: 20px 0;
     font-size: 0.85rem;
     font-family: var(--font-mono);
-    color: var(--text-color);
-    background-color: #f0f0ec;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .btn-log-load-more:hover {
-    background-color: var(--accent-color);
-    color: #ffffff;
-    border-color: var(--accent-color);
+    color: var(--muted-color);
   }
 </style>
 
@@ -121,11 +105,9 @@ layout: default
   <!-- 渲染后的日志容器 -->
   <div id="rendered-log-wrapper"></div>
 
-  <!-- 懒加载控制按钮 -->
-  <div class="log-load-more-wrapper" id="load-more-box" style="display: none;">
-    <button class="btn-log-load-more" onclick="loadNextBatch()">
-      加载更多历史日志 <span id="remaining-count-tag"></span>
-    </button>
+  <!-- 触底自动加载触发点 / 状态提示 -->
+  <div class="log-infinite-scroll-trigger" id="scroll-trigger" style="display: none;">
+    <span id="trigger-text">正在加载更多历史日志...</span>
   </div>
 
   <!-- 隐藏原始 Markdown HTML 内容供脚本解析 -->
@@ -145,11 +127,12 @@ layout: default
   </div>
 </div>
 
-<!-- 三级层级解析 + 懒加载渲染脚本 -->
+<!-- 三级层级解析 + 滚动触底自动加载脚本 -->
 <script>
-  var allLogGroups = []; // 存储解析后的所有组（年份、月份或日志条目）
+  var allLogGroups = []; // 存储解析后的所有组
   var currentIndex = 0;
-  var BATCH_SIZE = 25;   /* 每次加载 25 条日志 */
+  var BATCH_SIZE = 50;   /* 👈 首次及后续每次加载 50 条日志 */
+  var isLoading = false;
 
   document.addEventListener("DOMContentLoaded", function() {
     var rawEl = document.getElementById('raw-log-content');
@@ -196,14 +179,20 @@ layout: default
       allLogGroups.push({ type: 'item', node: currentItem });
     }
 
-    // 初始加载第一批
+    // 初始加载前 50 条
     loadNextBatch();
+
+    // 初始化 Intersection Observer 监听滚动触底
+    setupInfiniteScroll();
   });
 
   function loadNextBatch() {
+    if (isLoading) return;
+    isLoading = true;
+
     var wrapper = document.getElementById('rendered-log-wrapper');
-    var loadMoreBox = document.getElementById('load-more-box');
-    var countTag = document.getElementById('remaining-count-tag');
+    var triggerBox = document.getElementById('scroll-trigger');
+    var triggerText = document.getElementById('trigger-text');
 
     var renderedItemsCount = 0;
     var activeTimeline = wrapper.querySelector('.log-timeline:last-child');
@@ -216,7 +205,7 @@ layout: default
         yearDiv.className = 'log-year-title';
         yearDiv.innerHTML = group.node.innerHTML;
         wrapper.appendChild(yearDiv);
-        activeTimeline = null; // 重置时间轴容器
+        activeTimeline = null; 
       } 
       else if (group.type === 'month') {
         var monthDiv = document.createElement('div');
@@ -224,7 +213,6 @@ layout: default
         monthDiv.innerHTML = group.node.innerHTML;
         wrapper.appendChild(monthDiv);
 
-        // 为该月份创建单独的时间轴容器
         activeTimeline = document.createElement('div');
         activeTimeline.className = 'log-timeline';
         wrapper.appendChild(activeTimeline);
@@ -242,16 +230,41 @@ layout: default
       currentIndex++;
     }
 
-    // 更新懒加载按钮状态
+    // 检查剩余条目状态
     var totalItems = allLogGroups.filter(g => g.type === 'item').length;
     var currentRenderedItems = wrapper.querySelectorAll('.log-item').length;
     var remaining = totalItems - currentRenderedItems;
 
     if (remaining > 0) {
-      loadMoreBox.style.display = 'block';
-      countTag.textContent = '(剩余 ' + remaining + ' 条)';
+      triggerBox.style.display = 'block';
+      triggerText.textContent = '向下滚动加载更多历史日志 (剩余 ' + remaining + ' 条)';
     } else {
-      loadMoreBox.style.display = 'none';
+      triggerBox.style.display = 'block';
+      triggerText.textContent = '— 已加载全部随想日志 —';
     }
+
+    isLoading = false;
+  }
+
+  function setupInfiniteScroll() {
+    var triggerEl = document.getElementById('scroll-trigger');
+    if (!triggerEl) return;
+
+    var observer = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) {
+        var totalItems = allLogGroups.filter(g => g.type === 'item').length;
+        var wrapper = document.getElementById('rendered-log-wrapper');
+        var currentRenderedItems = wrapper ? wrapper.querySelectorAll('.log-item').length : 0;
+
+        // 仅在还有未渲染条目时触发自动加载
+        if (currentRenderedItems < totalItems) {
+          loadNextBatch();
+        }
+      }
+    }, {
+      rootMargin: '200px' /* 提前 200 像素触发，让滚动体验完全丝滑无预感 */
+    });
+
+    observer.observe(triggerEl);
   }
 </script>
