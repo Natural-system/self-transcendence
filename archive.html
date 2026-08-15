@@ -4,11 +4,22 @@ title: 年份归档
 permalink: /archive/
 ---
 
-{% comment %} 1. 自动计算全站文章总字数 {% endcomment %}
+{% comment %} 1. 自动计算全站（文章 + 独立页面）总字数 {% endcomment %}
 {% assign total_words = 0 %}
+
+{% comment %} (1) 累加所有 Post 文章字数 {% endcomment %}
 {% for post in site.posts %}
   {% assign post_words = post.content | strip_html | strip_newlines | size %}
   {% assign total_words = total_words | plus: post_words %}
+{% endfor %}
+
+{% comment %} (2) 累加独立页面 Page 字数（包含日志、关于及未来新增的独立页面） {% endcomment %}
+{% for page_item in site.pages %}
+  {% comment %} 排除归档页自身、首页索引页以及非 Markdown/内容页面 {% endcomment %}
+  {% if page_item.url != '/archive/' and page_item.url != '/' and page_item.name != '404.html' %}
+    {% assign page_words = page_item.content | strip_html | strip_newlines | size %}
+    {% assign total_words = total_words | plus: page_words %}
+  {% endif %}
 {% endfor %}
 
 {% comment %} 2. 根据字数四舍五入换算为“万字”或普通数字 {% endcomment %}
