@@ -63,7 +63,7 @@
       --code-border: transparent;
     }
 
-    /* 暗黑模式 (方案 A：代码块用稍亮的灰色 #1e1e1e，加上微弱边框区分界限) */
+    /* 暗黑模式 */
     html[data-theme="dark"] {
       --bg-color: #121212;
       --text-color: #e0e0e0;
@@ -96,7 +96,7 @@
     }
 
     /* ========================================== */
-    /* --- 2. 通用深色代码块样式 (方案 A 适配) --- */
+    /* --- 2. 通用深色代码块样式 --- */
     /* ========================================== */
     .highlight, 
     figure.highlight, 
@@ -152,7 +152,7 @@
       background-color: rgba(255, 255, 255, 0.1);
     }
 
-    /* 代码块右上角一键复制按钮样式 */
+    /* 代码块复制按钮样式 */
     .copy-code-button {
       position: absolute;
       top: 8px;
@@ -187,7 +187,7 @@
       border-color: #28a745 !important;
     }
 
-    /* 限制文章正文防撑爆保底 */
+    /* 限制文章正文防撑爆 */
     main, article, .post-content {
       max-width: 100%;
       min-width: 0;
@@ -224,9 +224,7 @@
       background-color: rgba(0, 0, 0, 0.015);
     }
 
-    /* ========================================== */
-    /* --- 2.1 全局文章引用块 (blockquote) 样式 --- */
-    /* ========================================== */
+    /* 全局文章引用块样式 */
     main blockquote, article blockquote, .post-content blockquote {
       margin: 1.5em 0;
       padding: 10px 16px;
@@ -246,7 +244,7 @@
     }
 
     /* ========================================== */
-    /* --- 3. 页面基础布局样式与主题切换器 UI --- */
+    /* --- 3. 页面布局与主题切换 UI --- */
     /* ========================================== */
     .progress-container {
       position: fixed;
@@ -330,7 +328,7 @@
       width: 150px;
     }
 
-    /* --- 主题切换色彩小圆点组件 (增强防遮挡) --- */
+    /* 主题切换按钮 */
     .theme-switcher {
       display: inline-flex;
       align-items: center;
@@ -359,7 +357,6 @@
       transform: scale(1.25);
     }
 
-    /* 选中状态显示外环效果 */
     .theme-dot.active {
       box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--accent-color);
     }
@@ -412,64 +409,6 @@
       white-space: nowrap;
     }
 
-    .layout-grid {
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 50px;
-      align-items: start;
-    }
-
-    @media (max-width: 850px) {
-      .layout-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .sidebar-toc {
-        display: none;
-      }
-    }
-
-    .sidebar-toc {
-      position: sticky;
-      top: 40px;
-      background: rgba(0, 0, 0, 0.03);
-      padding: 18px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      max-height: calc(100vh - 80px);
-      overflow-y: auto;
-    }
-
-    .toc-title {
-      font-weight: 700;
-      color: var(--muted-color);
-      margin-bottom: 10px;
-      padding-bottom: 5px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .toc-content ul {
-      padding-left: 15px;
-      margin: 5px 0;
-    }
-
-    .article-header {
-      margin-bottom: 30px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 15px;
-    }
-
-    .article-title {
-      font-size: 1.8rem;
-      line-height: 1.3;
-      margin: 0 0 10px 0;
-    }
-
-    .meta-info {
-      font-size: 0.85rem;
-      color: var(--muted-color);
-      font-family: var(--font-mono);
-    }
-
     footer {
       margin-top: 80px;
       padding-top: 20px;
@@ -477,129 +416,6 @@
       font-size: 0.85rem;
       color: var(--muted-color);
       text-align: center;
-    }
-
-    .pagination {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-color);
-      font-size: 0.9rem;
-      font-family: var(--font-mono);
-    }
-
-    .pagination a, .pagination button {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      padding: 4px 10px;
-      border-radius: 3px;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: inherit;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-
-    .pagination a:hover, .pagination button:hover {
-      border-color: var(--accent-color);
-      background-color: rgba(0, 0, 0, 0.05);
-      text-decoration: none;
-    }
-
-    .pagination .active {
-      background-color: var(--accent-color);
-      color: var(--bg-color);
-      border-color: var(--accent-color);
-    }
-
-    .pagination .disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      border-color: var(--border-color) !important;
-      background: transparent !important;
-    }
-
-    .pagination-jump {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: 8px;
-    }
-
-    .pagination-jump input {
-      width: 42px;
-      padding: 4px 6px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-color);
-      color: var(--text-color);
-      border-radius: 3px;
-      text-align: center;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      outline: none;
-    }
-
-    .pagination-jump input:focus {
-      border-color: var(--accent-color);
-    }
-
-    /* 年份归档折叠控制 */
-    .year-toggle-checkbox {
-      display: none;
-    }
-
-    .year-block .post-list .more-post {
-      display: none;
-    }
-
-    .btn-toggle-year {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 14px;
-      padding: 8px 18px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--text-color);
-      background-color: rgba(0, 0, 0, 0.04);
-      border: 1px solid var(--border-color);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    }
-
-    .btn-toggle-year:hover {
-      color: var(--bg-color);
-      background-color: var(--accent-color);
-      border-color: var(--accent-color);
-    }
-
-    .btn-toggle-year .arrow-icon {
-      font-size: 0.85rem;
-      font-weight: bold;
-      line-height: 1;
-    }
-
-    .btn-collapse {
-      display: none;
-    }
-
-    .year-toggle-checkbox:checked ~ .post-list .more-post {
-      display: flex !important;
-    }
-
-    .year-toggle-checkbox:checked ~ .btn-expand {
-      display: none !important;
-    }
-
-    .year-toggle-checkbox:checked ~ .btn-collapse {
-      display: inline-flex !important;
     }
 
     /* 全局搜索弹窗样式 */
@@ -626,22 +442,6 @@
       box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
       max-height: 70vh;
       overflow-y: auto;
-    }
-
-    /* 年份归档未展开时的渐隐效果 */
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
-      opacity: 0.65;
-      transition: opacity 0.3s ease;
-    }
-
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
-      opacity: 0.35;
-      transition: opacity 0.3s ease;
-    }
-
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9):hover,
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10):hover {
-      opacity: 1;
     }
   </style>
 </head>
@@ -675,7 +475,7 @@
           <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
         </div>
 
-        <!-- 主题颜色切换器（双重触发保障） -->
+        <!-- 主题颜色切换器 -->
         <div class="theme-switcher">
           <span class="theme-dot" data-set-theme="light" title="日光模式" onclick="changeTheme('light')"></span>
           <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式" onclick="changeTheme('warm')"></span>
@@ -706,8 +506,9 @@
     </div>
   </div>
 
+  <!-- 全局 JavaScript 逻辑直接放在布局文件内 -->
   <script>
-    // 0. 主题切换与持久化逻辑（全局可用）
+    // 0. 主题切换与持久化逻辑
     function changeTheme(targetTheme) {
       document.documentElement.setAttribute('data-theme', targetTheme);
       localStorage.setItem('theme', targetTheme);
@@ -750,13 +551,15 @@
 
     function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
+      if (!input) return;
+
       var query = input.value.trim().toLowerCase();
       var overlay = document.getElementById('search-modal-overlay');
       var listContainer = document.getElementById('search-results-list');
       var noResultEl = document.getElementById('search-no-results');
 
       if (!query) {
-        overlay.style.display = 'none';
+        if (overlay) overlay.style.display = 'none';
         return;
       }
 
@@ -766,13 +569,13 @@
         return matchTitle || matchContent;
       });
 
-      overlay.style.display = 'block';
+      if (overlay) overlay.style.display = 'block';
 
       if (matches.length === 0) {
-        listContainer.innerHTML = '';
-        noResultEl.style.display = 'block';
+        if (listContainer) listContainer.innerHTML = '';
+        if (noResultEl) noResultEl.style.display = 'block';
       } else {
-        noResultEl.style.display = 'none';
+        if (noResultEl) noResultEl.style.display = 'none';
         var html = '';
         matches.forEach(function(post, idx) {
           var seq = (idx + 1 < 10 ? '0' : '') + (idx + 1);
@@ -784,16 +587,18 @@
                     '<span class="post-date">' + post.date + '</span>' +
                   '</li>';
         });
-        listContainer.innerHTML = html;
+        if (listContainer) listContainer.innerHTML = html;
       }
     }
 
     function closeSearchModal(e) {
-      document.getElementById('search-modal-overlay').style.display = 'none';
+      var overlay = document.getElementById('search-modal-overlay');
+      if (overlay) overlay.style.display = 'none';
     }
 
     function closeSearchModalDirect() {
-      document.getElementById('search-modal-overlay').style.display = 'none';
+      var overlay = document.getElementById('search-modal-overlay');
+      if (overlay) overlay.style.display = 'none';
     }
 
     document.addEventListener('keydown', function(e) {
