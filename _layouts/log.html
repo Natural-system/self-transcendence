@@ -92,6 +92,17 @@ layout: default
     font-family: var(--font-mono);
     color: var(--muted-color);
   }
+
+  /* --- 6. 页头字数与阅读时间数据统计面板 --- */
+  .log-stats {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--muted-color);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 </style>
 
 <div class="log-container">
@@ -99,6 +110,12 @@ layout: default
     <h1 class="article-title">{{ page.title }}</h1>
     <div class="meta-info">
       记录日常随感与碎片思考 · Fun asr nano大模型语音转文字 · 不检查，零碎，错字勿怪 · 倒序排列
+    </div>
+    <!-- 页头字数与预计阅读时间 -->
+    <div class="log-stats">
+      <span>全页共 <strong id="log-word-count">-</strong> 字</span>
+      <span>·</span>
+      <span>预计阅读时间 <strong id="log-read-time">-</strong> 分钟</span>
     </div>
   </header>
 
@@ -127,7 +144,7 @@ layout: default
   </div>
 </div>
 
-<!-- 三级层级解析 + 滚动触底自动加载脚本 -->
+<!-- 三级层级解析 + 字数统计 + 滚动触底自动加载脚本 -->
 <script>
   var allLogGroups = [];
   var currentIndex = 0;
@@ -138,6 +155,9 @@ layout: default
     var rawEl = document.getElementById('raw-log-content');
     var wrapper = document.getElementById('rendered-log-wrapper');
     if (!rawEl || !wrapper) return;
+
+    // --- 计算全量字数与预计阅读时间 ---
+    calculateLogStats(rawEl);
 
     var nodes = Array.from(rawEl.children);
     var currentItem = null;
@@ -182,6 +202,28 @@ layout: default
     loadNextBatch();
     setupInfiniteScroll();
   });
+
+  /**
+   * 统计全页字数及计算预计阅读时间
+   */
+  function calculateLogStats(rawEl) {
+    var text = rawEl.textContent || rawEl.innerText || '';
+
+    // 匹配中文字符及英文单词
+    var cjkCount = (text.match(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
+    var englishWordsCount = (text.replace(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g, ' ').match(/\b\w+\b/g) || []).length;
+
+    var totalWords = cjkCount + englishWordsCount;
+
+    // 按 400 字/分钟速度计算阅读时长
+    var readTime = Math.max(1, Math.ceil(totalWords / 400));
+
+    var wordCountEl = document.getElementById('log-word-count');
+    var readTimeEl = document.getElementById('log-read-time');
+
+    if (wordCountEl) wordCountEl.textContent = totalWords.toLocaleString();
+    if (readTimeEl) readTimeEl.textContent = readTime;
+  }
 
   function loadNextBatch() {
     if (isLoading) return;
