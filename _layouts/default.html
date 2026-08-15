@@ -158,10 +158,18 @@
       font-size: 0.95rem;
     }
 
+/* 文章正文表格样式 */
+    main table, article table {
+      width: 100%;
+      border-collapse: collapse;  /* 折叠边框，避免边框间间隙 */
+      margin: 1.5em 0;
+      font-size: 0.95rem;
+    }
+
     main th, article th,
     main td, article td {
       padding: 8px 12px;
-      border: 1px solid var(--border-color); /* 使用你全局配置的浅灰边框色 */
+      border: 1px solid var(--border-color); /* 使用全局配置的浅灰边框色 */
       text-align: left;
     }
 
@@ -173,10 +181,31 @@
     main tr:nth-child(even), article tr:nth-child(even) {
       background-color: rgba(0, 0, 0, 0.015); /* 偶数行微弱背景色，增加可读性 */
     }
+
+    /* ========================================== */
+    /* --- 2.1 全局文章引用块 (blockquote) 样式 --- */
+    /* ========================================== */
+    main blockquote, article blockquote, .post-content blockquote {
+      margin: 1.5em 0;
+      padding: 10px 16px;
+      background-color: #f7f7f5;               /* 极浅灰衬底色 */
+      border-left: 4px solid var(--accent-color); /* 左侧醒目竖线 */
+      color: #555555;                          /* 略浅的文字颜色，提升层级感 */
+      border-radius: 0 4px 4px 0;              /* 右侧微小圆角 */
+    }
+
+    main blockquote p, article blockquote p, .post-content blockquote p {
+      margin: 0 0 8px 0;
+      line-height: 1.65;
+    }
+
+    main blockquote p:last-child, article blockquote p:last-child {
+      margin-bottom: 0;                        /* 清除最后一段多余下边距 */
+    }
+
     /* ========================================== */
     /* --- 3. 页面基础布局样式 --- */
-    /* ========================================== */
-    .progress-container {
+    /* ========================================== */    .progress-container {
       position: fixed;
       top: 0;
       left: 0;
