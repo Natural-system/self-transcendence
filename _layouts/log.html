@@ -73,15 +73,15 @@ layout: default
     line-height: 1.3;
   }
 
-  /* 日志正文：段落与空行优化 */
+  /* 👈 日志正文：段落与空行优化 */
   .log-item p {
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--text-color);
-    margin: 0 0 12px 0;
+    margin: 0 0 12px 0; /* 每次按 Enter 空行后，段落之间会有 12px 的舒适留白 */
   }
   .log-item p:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0;   /* 最后一段底部不留白，避免影响条目间距 */
   }
 
   /* --- 5. 触底自动加载提示器 --- */
@@ -127,7 +127,7 @@ layout: default
   </div>
 </div>
 
-<!-- 三级层级解析 + 滚动触底自动加载脚本（已优化调整） -->
+<!-- 三级层级解析 + 滚动触底自动加载脚本 -->
 <script>
   var allLogGroups = [];
   var currentIndex = 0;
@@ -142,10 +142,10 @@ layout: default
     var nodes = Array.from(rawEl.children);
     var currentItem = null;
 
-    // 解析隐藏的节点，将 h1(年)、h2(月)、h3(日) 分组整理
     nodes.forEach(function(node) {
       var tag = node.tagName.toLowerCase();
 
+      // 1. 解析 # 2026 年 为年份大标题
       if (tag === 'h1') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -153,6 +153,7 @@ layout: default
         }
         allLogGroups.push({ type: 'year', node: node });
       } 
+      // 2. 解析 ## 08 月 为月份中标题
       else if (tag === 'h2') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -160,6 +161,7 @@ layout: default
         }
         allLogGroups.push({ type: 'month', node: node });
       }
+      // 3. 解析 ### 08-14 为具体日志条目
       else if (tag === 'h3') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -177,9 +179,7 @@ layout: default
       allLogGroups.push({ type: 'item', node: currentItem });
     }
 
-    // 渲染第一批
     loadNextBatch();
-    // 初始化触底滚动监听
     setupInfiniteScroll();
   });
 
@@ -227,7 +227,7 @@ layout: default
       currentIndex++;
     }
 
-    var totalItems = allLogGroups.filter(function(g) { return g.type === 'item'; }).length;
+    var totalItems = allLogGroups.filter(g => g.type === 'item').length;
     var currentRenderedItems = wrapper.querySelectorAll('.log-item').length;
     var remaining = totalItems - currentRenderedItems;
 
@@ -248,7 +248,7 @@ layout: default
 
     var observer = new IntersectionObserver(function(entries) {
       if (entries[0].isIntersecting) {
-        var totalItems = allLogGroups.filter(function(g) { return g.type === 'item'; }).length;
+        var totalItems = allLogGroups.filter(g => g.type === 'item').length;
         var wrapper = document.getElementById('rendered-log-wrapper');
         var currentRenderedItems = wrapper ? wrapper.querySelectorAll('.log-item').length : 0;
 

@@ -17,61 +17,18 @@
   <!-- 规范链接 -->
   <link rel="canonical" href="{{ page.url | absolute_url }}">
 
-  <!-- 1. 防闪烁脚本：优先读取本地主题配置并应用到 <html> 标签 -->
-  <script>
-    (function() {
-      var savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    })();
-  </script>
-
   <style>
     /* ========================================== */
-    /* --- 1. 全局 CSS 变量与主题配置 --- */
+    /* --- 1. 全局 CSS 变量配置 --- */
     /* ========================================== */
-    :root, html[data-theme="light"] {
+    :root {
       --bg-color: #fbfbf9;
       --text-color: #2b2b2b;
       --muted-color: #8c8c8c;
       --border-color: #eaeaea;
       --accent-color: #000000;
-      --code-bg: #1e1e1e;
-      --code-border: transparent;
       --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       --font-mono: "SFMono-Regular", Consolas, "Fira Code", "Liberation Mono", Menlo, monospace;
-    }
-
-    /* 暖黄 / 羊皮纸模式 */
-    html[data-theme="warm"] {
-      --bg-color: #fbf0d9;
-      --text-color: #3f3935;
-      --muted-color: #8c8275;
-      --border-color: #e4d8c1;
-      --accent-color: #2b2521;
-      --code-bg: #1e1e1e;
-      --code-border: transparent;
-    }
-
-    /* 护眼绿模式 */
-    html[data-theme="green"] {
-      --bg-color: #c7edcc;
-      --text-color: #233329;
-      --muted-color: #6b8273;
-      --border-color: #b3dfb9;
-      --accent-color: #111c15;
-      --code-bg: #1e1e1e;
-      --code-border: transparent;
-    }
-
-    /* 暗黑模式 */
-    html[data-theme="dark"] {
-      --bg-color: #121212;
-      --text-color: #e0e0e0;
-      --muted-color: #888888;
-      --border-color: #2a2a2a;
-      --accent-color: #ffffff;
-      --code-bg: #1e1e1e;
-      --code-border: #333333;
     }
 
     body {
@@ -81,7 +38,6 @@
       line-height: 1.8;
       margin: 0;
       padding: 0;
-      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     a {
@@ -96,13 +52,14 @@
     }
 
     /* ========================================== */
-    /* --- 2. 通用深色代码块样式 --- */
+    /* --- 2. 通用深色代码块样式 (源头彻底防撑爆 + 支持复制按钮定位) --- */
     /* ========================================== */
+    /* Jekyll 生成的代码块外层容器兼容覆盖 */
     .highlight, 
     figure.highlight, 
     div.highlighter-rouge, 
     .highlighter-rouge div.highlight {
-      position: relative !important;
+      position: relative !important;     /* 必须相对定位，用于放置右上角复制按钮 */
       max-width: 100% !important;
       min-width: 0 !important;
       overflow-x: auto !important;
@@ -111,35 +68,33 @@
     }
 
     pre {
-      position: relative !important;
-      background-color: var(--code-bg) !important;
-      border: 1px solid var(--code-border);
-      color: #9cdcfe !important;
+      position: relative !important;     /* 必须相对定位 */
+      background-color: #1e1e1e !important; /* 暗黑背景色 */
+      color: #9cdcfe !important;           /* 默认浅蓝代码文字 */
       padding: 16px 18px 14px 18px;
       border-radius: 8px;
-      font-family: var(--font-mono);
+      font-family: var(--font-mono);       /* 使用等宽字体变量 */
       font-size: 14px;
       line-height: 1.6;
-      margin: 0;
+      margin: 0;                           /* 由外层统一处理 margin */
       max-width: 100% !important;
       min-width: 0 !important;
-      overflow-x: auto !important;
+      overflow-x: auto !important;          /* 超出时出现横向滚动条 */
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       box-sizing: border-box;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     pre code {
       background-color: transparent !important;
       color: inherit !important;
       padding: 0;
-      white-space: pre !important;
+      white-space: pre !important;         /* 保持代码排版格式并支持横向滚动 */
       word-break: normal !important;
       display: block;
     }
 
     p code, li code {
-      background-color: rgba(0, 0, 0, 0.06);
+      background-color: #f0f0ec;
       padding: 2px 6px;
       border-radius: 4px;
       font-family: var(--font-mono);
@@ -147,12 +102,7 @@
       word-break: break-word;
     }
 
-    html[data-theme="dark"] p code, 
-    html[data-theme="dark"] li code {
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-
-    /* 代码块复制按钮样式 */
+    /* 代码块右上角一键复制按钮样式 */
     .copy-code-button {
       position: absolute;
       top: 8px;
@@ -171,6 +121,7 @@
       user-select: none;
     }
 
+    /* 鼠标悬停在代码块上时显示复制按钮 */
     .highlight:hover .copy-code-button,
     pre:hover .copy-code-button {
       opacity: 1;
@@ -187,7 +138,7 @@
       border-color: #28a745 !important;
     }
 
-    /* 限制文章正文防撑爆 */
+    /* 限制文章正文防撑爆保底 */
     main, article, .post-content {
       max-width: 100%;
       min-width: 0;
@@ -199,11 +150,18 @@
       max-width: 100%;
       height: auto;
     }
-
     /* 文章正文表格样式 */
     main table, article table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: collapse;  /* 折叠边框，避免边框间间隙 */
+      margin: 1.5em 0;
+      font-size: 0.95rem;
+    }
+
+/* 文章正文表格样式 */
+    main table, article table {
+      width: 100%;
+      border-collapse: collapse;  /* 折叠边框，避免边框间间隙 */
       margin: 1.5em 0;
       font-size: 0.95rem;
     }
@@ -211,27 +169,29 @@
     main th, article th,
     main td, article td {
       padding: 8px 12px;
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-color); /* 使用全局配置的浅灰边框色 */
       text-align: left;
     }
 
     main th, article th {
-      background-color: rgba(0, 0, 0, 0.03);
+      background-color: #f0f0ec;            /* 表头浅灰背景 */
       font-weight: 600;
     }
 
     main tr:nth-child(even), article tr:nth-child(even) {
-      background-color: rgba(0, 0, 0, 0.015);
+      background-color: rgba(0, 0, 0, 0.015); /* 偶数行微弱背景色，增加可读性 */
     }
 
-    /* 全局文章引用块样式 */
+    /* ========================================== */
+    /* --- 2.1 全局文章引用块 (blockquote) 样式 --- */
+    /* ========================================== */
     main blockquote, article blockquote, .post-content blockquote {
       margin: 1.5em 0;
       padding: 10px 16px;
-      background-color: rgba(0, 0, 0, 0.03);
-      border-left: 4px solid var(--accent-color);
-      color: var(--muted-color);
-      border-radius: 0 4px 4px 0;
+      background-color: #f7f7f5;               /* 极浅灰衬底色 */
+      border-left: 4px solid var(--accent-color); /* 左侧醒目竖线 */
+      color: #555555;                          /* 略浅的文字颜色，提升层级感 */
+      border-radius: 0 4px 4px 0;              /* 右侧微小圆角 */
     }
 
     main blockquote p, article blockquote p, .post-content blockquote p {
@@ -240,13 +200,12 @@
     }
 
     main blockquote p:last-child, article blockquote p:last-child {
-      margin-bottom: 0;
+      margin-bottom: 0;                        /* 清除最后一段多余下边距 */
     }
 
     /* ========================================== */
-    /* --- 3. 页面布局与主题切换 UI --- */
-    /* ========================================== */
-    .progress-container {
+    /* --- 3. 页面基础布局样式 --- */
+    /* ========================================== */    .progress-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -290,7 +249,7 @@
     nav.site-nav {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px 20px;
+      gap: 16px 24px;
       align-items: center;
       font-size: 0.95rem;
       font-weight: 500;
@@ -313,58 +272,19 @@
     }
 
     .nav-search-input {
-      width: 120px;
+      width: 130px;
       padding: 4px 10px;
       font-size: 0.85rem;
       border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: #ffffff;
       border-radius: 4px;
       outline: none;
       transition: border-color 0.2s ease, width 0.2s ease;
     }
     .nav-search-input:focus {
       border-color: var(--accent-color);
-      width: 150px;
+      width: 160px;
     }
-
-    /* 主题切换按钮 */
-    .theme-switcher {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 6px;
-      padding-left: 8px;
-      border-left: 1px solid var(--border-color);
-      position: relative;
-      z-index: 99;
-    }
-
-    .theme-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 1.5px solid rgba(0, 0, 0, 0.15);
-      box-sizing: border-box;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      position: relative;
-      display: inline-block;
-      pointer-events: auto;
-    }
-
-    .theme-dot:hover {
-      transform: scale(1.25);
-    }
-
-    .theme-dot.active {
-      box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--accent-color);
-    }
-
-    .theme-dot[data-set-theme="light"] { background-color: #fbfbf9; }
-    .theme-dot[data-set-theme="warm"]  { background-color: #fbf0d9; }
-    .theme-dot[data-set-theme="green"] { background-color: #c7edcc; }
-    .theme-dot[data-set-theme="dark"]  { background-color: #121212; border-color: rgba(255, 255, 255, 0.3); }
 
     .post-list {
       list-style: none;
@@ -409,6 +329,66 @@
       white-space: nowrap;
     }
 
+    /* 双栏文章布局 (左侧目录，右侧正文) 
+       核心关键项：显式使用 minmax(0, 1fr) 阻止弹性网格被代码块强制撑宽 */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 50px;
+      align-items: start;
+    }
+
+    @media (max-width: 850px) {
+      .layout-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .sidebar-toc {
+        display: none; /* 小屏幕自动隐藏左侧目录 */
+      }
+    }
+
+    .sidebar-toc {
+      position: sticky;
+      top: 40px;
+      background: #f4f4f0;
+      padding: 18px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      max-height: calc(100vh - 80px);
+      overflow-y: auto;
+    }
+
+    .toc-title {
+      font-weight: 700;
+      color: var(--muted-color);
+      margin-bottom: 10px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .toc-content ul {
+      padding-left: 15px;
+      margin: 5px 0;
+    }
+
+    .article-header {
+      margin-bottom: 30px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+    }
+
+    .article-title {
+      font-size: 1.8rem;
+      line-height: 1.3;
+      margin: 0 0 10px 0;
+    }
+
+    .meta-info {
+      font-size: 0.85rem;
+      color: var(--muted-color);
+      font-family: var(--font-mono);
+    }
+
     footer {
       margin-top: 80px;
       padding-top: 20px;
@@ -416,6 +396,128 @@
       font-size: 0.85rem;
       color: var(--muted-color);
       text-align: center;
+    }
+
+    .pagination {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-family: var(--font-mono);
+    }
+
+    .pagination a, .pagination button {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 4px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .pagination a:hover, .pagination button:hover {
+      border-color: var(--accent-color);
+      background-color: #f0f0ec;
+      text-decoration: none;
+    }
+
+    .pagination .active {
+      background-color: var(--accent-color);
+      color: #ffffff;
+      border-color: var(--accent-color);
+    }
+
+    .pagination .disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: var(--border-color) !important;
+      background: transparent !important;
+    }
+
+    .pagination-jump {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .pagination-jump input {
+      width: 42px;
+      padding: 4px 6px;
+      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border-radius: 3px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .pagination-jump input:focus {
+      border-color: var(--accent-color);
+    }
+
+    /* 年份归档折叠控制 */
+    .year-toggle-checkbox {
+      display: none;
+    }
+
+    .year-block .post-list .more-post {
+      display: none;
+    }
+
+    .btn-toggle-year {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 14px;
+      padding: 8px 18px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-color);
+      background-color: #f0f0ec;
+      border: 1px solid #dcdcd8;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .btn-toggle-year:hover {
+      color: #ffffff;
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+
+    .btn-toggle-year .arrow-icon {
+      font-size: 0.85rem;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .btn-collapse {
+      display: none;
+    }
+
+    .year-toggle-checkbox:checked ~ .post-list .more-post {
+      display: flex !important;
+    }
+
+    .year-toggle-checkbox:checked ~ .btn-expand {
+      display: none !important;
+    }
+
+    .year-toggle-checkbox:checked ~ .btn-collapse {
+      display: inline-flex !important;
     }
 
     /* 全局搜索弹窗样式 */
@@ -434,14 +536,28 @@
     .search-modal-content {
       max-width: 680px;
       margin: 80px auto 0;
-      background: var(--bg-color);
-      color: var(--text-color);
-      border: 1px solid var(--border-color);
+      background: #ffffff;
       border-radius: 8px;
       padding: 20px;
       box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
       max-height: 70vh;
       overflow-y: auto;
+    }
+
+    /* 年份归档未展开时的渐隐效果 */
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
+      opacity: 0.65;
+      transition: opacity 0.3s ease;
+    }
+
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
+      opacity: 0.35;
+      transition: opacity 0.3s ease;
+    }
+
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9):hover,
+    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10):hover {
+      opacity: 1;
     }
   </style>
 </head>
@@ -474,14 +590,6 @@
         <div style="display: inline-flex; align-items: center; margin-left: 4px;">
           <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
         </div>
-
-        <!-- 主题颜色切换器 -->
-        <div class="theme-switcher">
-          <span class="theme-dot" data-set-theme="light" title="日光模式" onclick="changeTheme('light')"></span>
-          <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式" onclick="changeTheme('warm')"></span>
-          <span class="theme-dot" data-set-theme="green" title="护眼绿模式" onclick="changeTheme('green')"></span>
-          <span class="theme-dot" data-set-theme="dark" title="暗黑模式" onclick="changeTheme('dark')"></span>
-        </div>
       </nav>
     </header>
 
@@ -497,37 +605,16 @@
   <!-- 全局搜索弹窗组件 -->
   <div id="search-modal-overlay" onclick="closeSearchModal(event)">
     <div class="search-modal-content" onclick="event.stopPropagation()">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
-        <h3 style="margin:0; font-size: 1.05rem; color:var(--text-color);">搜索结果</h3>
-        <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.4rem; color:var(--muted-color); line-height: 1;">&times;</span>
+      <div style="display:flex; justify-scale:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="margin:0; font-size: 1.05rem; color:#333;">搜索结果</h3>
+        <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.4rem; color:#888; line-height: 1;">&times;</span>
       </div>
       <ul id="search-results-list" class="post-list"></ul>
       <div id="search-no-results" style="display:none; color:var(--muted-color); font-size:0.9rem; padding: 15px 0;">未找到相关文章</div>
     </div>
   </div>
 
-  <!-- 全局 JavaScript 逻辑直接放在布局文件内 -->
   <script>
-    // 0. 主题切换与持久化逻辑
-    function changeTheme(targetTheme) {
-      document.documentElement.setAttribute('data-theme', targetTheme);
-      localStorage.setItem('theme', targetTheme);
-      
-      var dots = document.querySelectorAll('.theme-dot');
-      dots.forEach(function(dot) {
-        if (dot.getAttribute('data-set-theme') === targetTheme) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
-        }
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      changeTheme(currentTheme);
-    });
-
     // 1. 顶部阅读进度条
     window.onscroll = function() {
       var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
@@ -551,15 +638,13 @@
 
     function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
-      if (!input) return;
-
       var query = input.value.trim().toLowerCase();
       var overlay = document.getElementById('search-modal-overlay');
       var listContainer = document.getElementById('search-results-list');
       var noResultEl = document.getElementById('search-no-results');
 
       if (!query) {
-        if (overlay) overlay.style.display = 'none';
+        overlay.style.display = 'none';
         return;
       }
 
@@ -569,13 +654,13 @@
         return matchTitle || matchContent;
       });
 
-      if (overlay) overlay.style.display = 'block';
+      overlay.style.display = 'block';
 
       if (matches.length === 0) {
-        if (listContainer) listContainer.innerHTML = '';
-        if (noResultEl) noResultEl.style.display = 'block';
+        listContainer.innerHTML = '';
+        noResultEl.style.display = 'block';
       } else {
-        if (noResultEl) noResultEl.style.display = 'none';
+        noResultEl.style.display = 'none';
         var html = '';
         matches.forEach(function(post, idx) {
           var seq = (idx + 1 < 10 ? '0' : '') + (idx + 1);
@@ -587,18 +672,16 @@
                     '<span class="post-date">' + post.date + '</span>' +
                   '</li>';
         });
-        if (listContainer) listContainer.innerHTML = html;
+        listContainer.innerHTML = html;
       }
     }
 
     function closeSearchModal(e) {
-      var overlay = document.getElementById('search-modal-overlay');
-      if (overlay) overlay.style.display = 'none';
+      document.getElementById('search-modal-overlay').style.display = 'none';
     }
 
     function closeSearchModalDirect() {
-      var overlay = document.getElementById('search-modal-overlay');
-      if (overlay) overlay.style.display = 'none';
+      document.getElementById('search-modal-overlay').style.display = 'none';
     }
 
     document.addEventListener('keydown', function(e) {
@@ -607,16 +690,20 @@
 
     // 3. 代码块一键复制功能注入
     document.addEventListener('DOMContentLoaded', function() {
+      // 查找页面上的所有代码块容器（兼容各种 Jekyll 高亮标签结构）
       var codeBlocks = document.querySelectorAll('pre');
 
       codeBlocks.forEach(function(pre) {
+        // 如果已经存在复制按钮，跳过
         if (pre.querySelector('.copy-code-button')) return;
 
+        // 创建复制按钮
         var btn = document.createElement('button');
         btn.className = 'copy-code-button';
         btn.type = 'button';
         btn.innerText = '复制';
 
+        // 绑定点击事件
         btn.addEventListener('click', function() {
           var code = pre.querySelector('code');
           var textToCopy = code ? code.innerText : pre.innerText;
@@ -638,6 +725,7 @@
           });
         });
 
+        // 将按钮插入到代码块中
         pre.appendChild(btn);
       });
     });
