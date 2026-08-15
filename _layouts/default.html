@@ -112,7 +112,7 @@
 
     pre {
       position: relative !important;
-      background-color: var(--code-bg) !important; /* 动态响应主题变量 */
+      background-color: var(--code-bg) !important;
       border: 1px solid var(--code-border);
       color: #9cdcfe !important;
       padding: 16px 18px 14px 18px;
@@ -330,7 +330,7 @@
       width: 150px;
     }
 
-    /* --- 主题切换色彩小圆点组件 --- */
+    /* --- 主题切换色彩小圆点组件 (增强防遮挡) --- */
     .theme-switcher {
       display: inline-flex;
       align-items: center;
@@ -338,6 +338,8 @@
       margin-left: 6px;
       padding-left: 8px;
       border-left: 1px solid var(--border-color);
+      position: relative;
+      z-index: 99;
     }
 
     .theme-dot {
@@ -349,10 +351,12 @@
       box-sizing: border-box;
       transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
       position: relative;
+      display: inline-block;
+      pointer-events: auto;
     }
 
     .theme-dot:hover {
-      transform: scale(1.2);
+      transform: scale(1.25);
     }
 
     /* 选中状态显示外环效果 */
@@ -671,12 +675,12 @@
           <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
         </div>
 
-        <!-- 主题颜色切换器（小圆点） -->
+        <!-- 主题颜色切换器（双重触发保障） -->
         <div class="theme-switcher">
-          <span class="theme-dot" data-set-theme="light" title="日光模式"></span>
-          <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式"></span>
-          <span class="theme-dot" data-set-theme="green" title="护眼绿模式"></span>
-          <span class="theme-dot" data-set-theme="dark" title="暗黑模式"></span>
+          <span class="theme-dot" data-set-theme="light" title="日光模式" onclick="changeTheme('light')"></span>
+          <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式" onclick="changeTheme('warm')"></span>
+          <span class="theme-dot" data-set-theme="green" title="护眼绿模式" onclick="changeTheme('green')"></span>
+          <span class="theme-dot" data-set-theme="dark" title="暗黑模式" onclick="changeTheme('dark')"></span>
         </div>
       </nav>
     </header>
@@ -703,30 +707,24 @@
   </div>
 
   <script>
-    // 0. 主题切换与持久化逻辑
-    document.addEventListener('DOMContentLoaded', function() {
-      var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-      updateActiveDot(currentTheme);
-
+    // 0. 主题切换与持久化逻辑（全局可用）
+    function changeTheme(targetTheme) {
+      document.documentElement.setAttribute('data-theme', targetTheme);
+      localStorage.setItem('theme', targetTheme);
+      
       var dots = document.querySelectorAll('.theme-dot');
       dots.forEach(function(dot) {
-        dot.addEventListener('click', function() {
-          var targetTheme = this.getAttribute('data-set-theme');
-          document.documentElement.setAttribute('data-theme', targetTheme);
-          localStorage.setItem('theme', targetTheme);
-          updateActiveDot(targetTheme);
-        });
+        if (dot.getAttribute('data-set-theme') === targetTheme) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
       });
+    }
 
-      function updateActiveDot(theme) {
-        dots.forEach(function(dot) {
-          if (dot.getAttribute('data-set-theme') === theme) {
-            dot.classList.add('active');
-          } else {
-            dot.classList.remove('active');
-          }
-        });
-      }
+    document.addEventListener('DOMContentLoaded', function() {
+      var currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      changeTheme(currentTheme);
     });
 
     // 1. 顶部阅读进度条
