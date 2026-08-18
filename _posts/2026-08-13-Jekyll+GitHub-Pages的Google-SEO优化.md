@@ -2,7 +2,7 @@
 layout: post
 title: "Jekyll+GitHub Pages的Google SEO优化"
 date: 2026-08-13
-categories: 代码
+categories: 软件
 ---
 
 对于使用 GitHub Pages 和 Jekyll 搭建的个人静态博客而言，不需要花钱购买营销服务，也不必沉迷于复杂的 SEO 技巧。但**“完全不管”也是不可取的**——若缺乏基础的搜索引擎指引，Google 爬虫检索和收录的速度会非常缓慢，甚至可能误抓一些非必要的页面（如搜索弹窗或 Hash 标签页）。
