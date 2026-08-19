@@ -4,40 +4,7 @@ title: 年份归档
 permalink: /archive/
 ---
 
-{% comment %} 1. 自动计算全站（所有文章 + 所有 Markdown/HTML 独立页面）总字数 {% endcomment %}
-{% assign total_words = 0 %}
-
-{% comment %} (1) 自动遍历所有博客文章 {% endcomment %}
-{% for post in site.posts %}
-  {% assign post_words = post.content | strip_html | strip_newlines | size %}
-  {% assign total_words = total_words | plus: post_words %}
-{% endfor %}
-
-{% comment %} (2) 自动遍历所有独立页面（自动过滤非内容文件，无需手动追加页面名称） {% endcomment %}
-{% for page_item in site.pages %}
-  {% comment %} 自动筛选：仅统计 .md 和 .html 文件，且排除 404 页面与 feed/sitemap 等文件 {% endcomment %}
-  {% if page_item.path contains '.md' or page_item.path contains '.html' %}
-    {% unless page_item.path contains '404' or page_item.path contains 'feed' or page_item.path contains 'sitemap' %}
-      {% assign page_words = page_item.content | strip_html | strip_newlines | size %}
-      {% assign total_words = total_words | plus: page_words %}
-    {% endunless %}
-  {% endif %}
-{% endfor %}
-
-{% comment %} 2. 字数换算：保留一位小数（例：57.2万字），避免数万字变动时因为四舍五入看起来没变化 {% endcomment %}
-{% if total_words >= 10000 %}
-  {% assign display_words = total_words | divided_by: 10000.0 | round: 1 %}
-  {% assign formatted_words = display_words | append: "万字" %}
-{% else %}
-  {% assign formatted_words = total_words | append: "字" %}
-{% endif %}
-
-<h2>
-  年份归档
-  <span style="font-size: 0.9rem; font-weight: normal; color: var(--muted-color); margin-left: 8px;">
-    （全站共计 {{ site.posts.size }} 篇，{{ formatted_words }}）
-  </span>
-</h2>
+<h2>年份归档</h2>
 
 {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
 

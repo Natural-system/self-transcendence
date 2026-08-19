@@ -677,8 +677,43 @@
       {{ content }}
     </main>
 
+    {% comment %} 全站字数统计逻辑：自动累加 文章(site.posts) + 日志(site.logs) + 所有独立页面(site.pages) {% endcomment %}
+    {% assign total_site_words = 0 %}
+
+    {% comment %} 1. 统计所有文章字数 {% endcomment %}
+    {% for post in site.posts %}
+      {% assign post_words = post.content | strip_html | strip_newlines | size %}
+      {% assign total_site_words = total_site_words | plus: post_words %}
+    {% endfor %}
+
+    {% comment %} 2. 统计所有日志字数 {% endcomment %}
+    {% for log in site.logs %}
+      {% assign log_words = log.content | strip_html | strip_newlines | size %}
+      {% assign total_site_words = total_site_words | plus: log_words %}
+    {% endfor %}
+
+    {% comment %} 3. 统计所有独立页面字数（包含 about、log 页面及未来新建的 Markdown 页面） {% endcomment %}
+    {% for page_item in site.pages %}
+      {% assign ext = page_item.name | split: '.' | last %}
+      {% comment %} 过滤掉非内容类页面、索引页及配置文件 {% endcomment %}
+      {% if page_item.url != '/' and page_item.url != '/archive/' and ext == 'md' or ext == 'html' %}
+        {% unless page_item.name == '404.html' or page_item.name == 'robots.txt' or page_item.name == 'sitemap.xml' or page_item.name == 'categories.html' or page_item.name == 'archive.html' or page_item.name == 'index.html' %}
+          {% assign page_words = page_item.content | strip_html | strip_newlines | size %}
+          {% assign total_site_words = total_site_words | plus: page_words %}
+        {% endunless %}
+      {% endif %}
+    {% endfor %}
+
+    {% comment %} 4. 格式化字数（大于等于一万时取整，显示为 XX万字） {% endcomment %}
+    {% if total_site_words >= 10000 %}
+      {% assign display_wan = total_site_words | divided_by: 10000 %}
+      {% assign site_word_text = display_wan | append: "万字" %}
+    {% else %}
+      {% assign site_word_text = total_site_words | append: "字" %}
+    {% endif %}
+
     <footer>
-      &copy; {{ 'now' | date: "%Y" }} {{ site.title }} · Powered by Jekyll & GitHub Pages
+      &copy; {{ 'now' | date: "%Y" }} {{ site.title }} · Powered by Jekyll & GitHub Pages · 全站共计 {{ site.posts.size }} 篇，{{ site_word_text }}
     </footer>
   </div>
 
