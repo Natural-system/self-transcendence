@@ -1,7 +1,8 @@
 ---
-layout: log
+layout: default
 title: 随想日志
-permalink: /log/
+permalink: /logs/
+published: true
 ---
 
 # 2017 年
