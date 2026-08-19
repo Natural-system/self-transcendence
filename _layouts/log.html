@@ -3,9 +3,158 @@ layout: default
 ---
 
 <style>
-  .log-container {
-    max-width: 800px;
+  .log-page-layout {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1100px;
     margin: 0 auto;
+    position: relative;
+  }
+
+  .log-container {
+    flex: 1;
+    max-width: 800px;
+    min-width: 0;
+  }
+
+  /* --- 左侧时间线侧边栏样式 --- */
+  .log-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+  }
+
+  .log-sidebar-inner {
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding-right: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+  }
+
+  .log-sidebar-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .timeline-tree, .timeline-tree ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .timeline-tree ul {
+    padding-left: 14px;
+    display: none; /* 默认折叠 */
+  }
+
+  .timeline-tree ul.open {
+    display: block;
+  }
+
+  .timeline-tree li {
+    margin: 4px 0;
+    line-height: 1.5;
+  }
+
+  .timeline-node {
+    cursor: pointer;
+    color: var(--muted-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  .timeline-node:hover {
+    color: var(--accent-color);
+  }
+
+  .timeline-node.active {
+    color: var(--accent-color);
+    font-weight: 600;
+  }
+
+  .timeline-arrow {
+    font-size: 0.75rem;
+    display: inline-block;
+    transition: transform 0.2s;
+    width: 12px;
+  }
+
+  .timeline-node.expanded > .timeline-arrow {
+    transform: rotate(90deg);
+  }
+
+  .timeline-date-link {
+    cursor: pointer;
+    color: var(--muted-color);
+    font-size: 0.83rem;
+    display: block;
+    padding: 2px 0;
+    transition: color 0.2s;
+  }
+
+  .timeline-date-link:hover {
+    color: var(--accent-color);
+  }
+
+  /* 移动端时间线切换按钮 */
+  .timeline-toggle-btn {
+    display: none;
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 99;
+    background: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+  }
+
+  /* 响应式适配：屏幕较小（< 992px）时侧边栏浮动 */
+  @media (max-width: 991px) {
+    .log-sidebar {
+      position: fixed;
+      right: 20px;
+      bottom: 70px;
+      z-index: 98;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      width: 220px;
+      display: none;
+    }
+    .log-sidebar.mobile-show {
+      display: block;
+    }
+    .timeline-toggle-btn {
+      display: block;
+    }
+  }
+
+  /* 高亮动画 */
+  @keyframes highlightFade {
+    0% { background-color: rgba(255, 235, 59, 0.3); }
+    100% { background-color: transparent; }
+  }
+
+  .item-highlight {
+    animation: highlightFade 2.5s ease-out;
+    border-radius: 4px;
   }
 
   /* --- 1. 年份大标题样式 (# 2026 年) --- */
@@ -73,15 +222,15 @@ layout: default
     line-height: 1.3;
   }
 
-  /* 👈 日志正文：段落与空行优化 */
+  /* 日志正文：段落与空行优化 */
   .log-item p {
     font-size: 0.95rem;
     line-height: 1.6;
     color: var(--text-color);
-    margin: 0 0 12px 0; /* 每次按 Enter 空行后，段落之间会有 12px 的舒适留白 */
+    margin: 0 0 12px 0;
   }
   .log-item p:last-child {
-    margin-bottom: 0;   /* 最后一段底部不留白，避免影响条目间距 */
+    margin-bottom: 0;
   }
 
   /* --- 5. 触底自动加载提示器 --- */
@@ -105,49 +254,62 @@ layout: default
   }
 </style>
 
-<div class="log-container">
-  <header class="article-header">
-    <h1 class="article-title">{{ page.title }}</h1>
-    <div class="meta-info">
-      记录日常随感与碎片思考 · Fun asr nano大模型语音转文字 · 不检查，零碎，错字勿怪 · 倒序排列
+<div class="log-page-layout">
+  <!-- 左侧折叠时间线侧边栏 -->
+  <aside class="log-sidebar" id="log-sidebar">
+    <div class="log-sidebar-inner">
+      <div class="log-sidebar-title">时间线导航</div>
+      <div id="timeline-tree-container"></div>
     </div>
-    <!-- 页头字数与预计阅读时间 -->
-    <div class="log-stats">
-      <span>全页共 <strong id="log-word-count">-</strong> 字</span>
-      <span>·</span>
-      <span>预计阅读时间 <strong id="log-read-time">-</strong> 分钟</span>
+  </aside>
+
+  <!-- 移动端侧栏切换按钮 -->
+  <button class="timeline-toggle-btn" id="sidebar-toggle-btn">📅 时间线</button>
+
+  <div class="log-container">
+    <header class="article-header">
+      <h1 class="article-title">{{ page.title }}</h1>
+      <div class="meta-info">
+        记录日常随感与碎片思考 · Fun asr nano大模型语音转文字 · 不检查，零碎，错字勿怪 · 倒序排列
+      </div>
+      <!-- 页头字数与预计阅读时间 -->
+      <div class="log-stats">
+        <span>全页共 <strong id="log-word-count">-</strong> 字</span>
+        <span>·</span>
+        <span>预计阅读时间 <strong id="log-read-time">-</strong> 分钟</span>
+      </div>
+    </header>
+
+    <!-- 渲染后的日志容器 -->
+    <div id="rendered-log-wrapper"></div>
+
+    <!-- 触底自动加载触发点 / 状态提示 -->
+    <div class="log-infinite-scroll-trigger" id="scroll-trigger" style="display: none;">
+      <span id="trigger-text">正在加载更多历史日志...</span>
     </div>
-  </header>
 
-  <!-- 渲染后的日志容器 -->
-  <div id="rendered-log-wrapper"></div>
+    <!-- 隐藏原始 Markdown HTML 内容供脚本解析（利用 Jekyll 集合按年份倒序拼接） -->
+    <div id="raw-log-content" style="display: none;">
+      {% assign sorted_logs = site.logs | sort: 'year' | reverse %}
+      {% for log in sorted_logs %}
+        {{ log.content }}
+      {% endfor %}
+    </div>
 
-  <!-- 触底自动加载触发点 / 状态提示 -->
-  <div class="log-infinite-scroll-trigger" id="scroll-trigger" style="display: none;">
-    <span id="trigger-text">正在加载更多历史日志...</span>
-  </div>
-
-  <!-- 隐藏原始 Markdown HTML 内容供脚本解析（利用 Jekyll 集合按年份倒序拼接） -->
-  <div id="raw-log-content" style="display: none;">
-    {% assign sorted_logs = site.logs | sort: 'year' | reverse %}
-    {% for log in sorted_logs %}
-      {{ log.content }}
-    {% endfor %}
-  </div>
-
-  <!-- Utterances 评论区系统 -->
-  <div class="article-comments" style="margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-    <script src="https://utteranc.es/client.js"
-            repo="Natural-system/self-transcendence"
-            issue-term="pathname"
-            theme="github-light"
-            crossorigin="anonymous"
-            async>
-    </script>
+    <!-- Utterances 评论区系统 -->
+    <div class="article-comments" style="margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+      <script src="https://utteranc.es/client.js"
+              repo="Natural-system/self-transcendence"
+              issue-term="pathname"
+              theme="github-light"
+              crossorigin="anonymous"
+              async>
+      </script>
+    </div>
   </div>
 </div>
 
-<!-- 三级层级解析 + 字数统计 + 滚动触底自动加载脚本 -->
+<!-- 三级层级解析 + 字数统计 + 滚动触底自动加载 + 侧栏时间线脚本 -->
 <script>
   var allLogGroups = [];
   var currentIndex = 0;
@@ -159,38 +321,41 @@ layout: default
     var wrapper = document.getElementById('rendered-log-wrapper');
     if (!rawEl || !wrapper) return;
 
-    // --- 计算全量字数与预计阅读时间 ---
+    // 1. 计算全量字数与预计阅读时间
     calculateLogStats(rawEl);
 
+    // 2. 解析 DOM 形成线性数据结构（用于分页渲染）
     var nodes = Array.from(rawEl.children);
     var currentItem = null;
+    var globalItemIndex = 0;
 
     nodes.forEach(function(node) {
       var tag = node.tagName.toLowerCase();
 
-      // 1. 解析 # 2026 年 为年份大标题
       if (tag === 'h1') {
         if (currentItem) {
-          allLogGroups.push({ type: 'item', node: currentItem });
+          allLogGroups.push({ type: 'item', node: currentItem, index: globalItemIndex++ });
           currentItem = null;
         }
         allLogGroups.push({ type: 'year', node: node });
       } 
-      // 2. 解析 ## 08 月 为月份中标题
       else if (tag === 'h2') {
         if (currentItem) {
-          allLogGroups.push({ type: 'item', node: currentItem });
+          allLogGroups.push({ type: 'item', node: currentItem, index: globalItemIndex++ });
           currentItem = null;
         }
         allLogGroups.push({ type: 'month', node: node });
       }
-      // 3. 解析 ### 08-14 为具体日志条目
       else if (tag === 'h3') {
         if (currentItem) {
-          allLogGroups.push({ type: 'item', node: currentItem });
+          allLogGroups.push({ type: 'item', node: currentItem, index: globalItemIndex++ });
         }
         currentItem = document.createElement('div');
         currentItem.className = 'log-item';
+        
+        // 绑定 ID 方便定位跳转
+        var dateText = node.textContent.trim();
+        currentItem.setAttribute('data-log-index', globalItemIndex);
         currentItem.appendChild(node);
       } 
       else if (currentItem) {
@@ -199,11 +364,18 @@ layout: default
     });
 
     if (currentItem) {
-      allLogGroups.push({ type: 'item', node: currentItem });
+      allLogGroups.push({ type: 'item', node: currentItem, index: globalItemIndex++ });
     }
 
+    // 3. 构建方案 B 左侧时间线树状菜单
+    buildTimelineSidebar();
+
+    // 4. 首次渲染 Batch & 设置滚动监听
     loadNextBatch();
     setupInfiniteScroll();
+
+    // 5. 移动端侧栏显示控制
+    setupMobileSidebar();
   });
 
   /**
@@ -212,13 +384,10 @@ layout: default
   function calculateLogStats(rawEl) {
     var text = rawEl.textContent || rawEl.innerText || '';
 
-    // 匹配中文字符及英文单词
     var cjkCount = (text.match(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
     var englishWordsCount = (text.replace(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g, ' ').match(/\b\w+\b/g) || []).length;
 
     var totalWords = cjkCount + englishWordsCount;
-
-    // 按 400 字/分钟速度计算阅读时长
     var readTime = Math.max(1, Math.ceil(totalWords / 400));
 
     var wordCountEl = document.getElementById('log-word-count');
@@ -226,6 +395,152 @@ layout: default
 
     if (wordCountEl) wordCountEl.textContent = totalWords.toLocaleString();
     if (readTimeEl) readTimeEl.textContent = readTime;
+  }
+
+  /**
+   * 解析 hidden content，生成侧栏“年 -> 月 -> 日”树
+   */
+  function buildTimelineSidebar() {
+    var container = document.getElementById('timeline-tree-container');
+    if (!container) return;
+
+    var treeData = [];
+    var currentYearObj = null;
+    var currentMonthObj = null;
+
+    allLogGroups.forEach(function(group) {
+      if (group.type === 'year') {
+        currentYearObj = {
+          yearName: group.node.textContent.trim(),
+          months: []
+        };
+        treeData.push(currentYearObj);
+        currentMonthObj = null;
+      } 
+      else if (group.type === 'month') {
+        if (!currentYearObj) {
+          currentYearObj = { yearName: '未分类', months: [] };
+          treeData.push(currentYearObj);
+        }
+        currentMonthObj = {
+          monthName: group.node.textContent.trim(),
+          items: []
+        };
+        currentYearObj.months.push(currentMonthObj);
+      } 
+      else if (group.type === 'item') {
+        if (currentMonthObj) {
+          var h3El = group.node.querySelector('h3');
+          var dateTitle = h3El ? h3El.textContent.trim() : '日志';
+          currentMonthObj.items.push({
+            dateTitle: dateTitle,
+            globalIndex: group.index
+          });
+        }
+      }
+    });
+
+    // 渲染 HTML 树形结构
+    var treeUl = document.createElement('ul');
+    treeUl.className = 'timeline-tree';
+
+    treeData.forEach(function(yearItem) {
+      var yearLi = document.createElement('li');
+      
+      var yearNode = document.createElement('div');
+      yearNode.className = 'timeline-node';
+      yearNode.innerHTML = '<span class="timeline-arrow">▶</span> <span>' + yearItem.yearName + '</span>';
+      
+      var monthUl = document.createElement('ul');
+
+      yearItem.months.forEach(function(monthItem) {
+        var monthLi = document.createElement('li');
+        
+        var monthNode = document.createElement('div');
+        monthNode.className = 'timeline-node';
+        monthNode.innerHTML = '<span class="timeline-arrow">▶</span> <span>' + monthItem.monthName + '</span>';
+
+        var dateUl = document.createElement('ul');
+
+        monthItem.items.forEach(function(dateItem) {
+          var dateLi = document.createElement('li');
+          var dateLink = document.createElement('span');
+          dateLink.className = 'timeline-date-link';
+          dateLink.textContent = dateItem.dateTitle;
+
+          // 点击日期：跳转至对应日志位置
+          dateLink.addEventListener('click', function(e) {
+            e.stopPropagation();
+            jumpToLogIndex(dateItem.globalIndex);
+          });
+
+          dateLi.appendChild(dateLink);
+          dateUl.appendChild(dateLi);
+        });
+
+        // 点击月份：展开/收起日期列表
+        monthNode.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var isOpen = dateUl.classList.contains('open');
+          if (isOpen) {
+            dateUl.classList.remove('open');
+            monthNode.classList.remove('expanded');
+          } else {
+            dateUl.classList.add('open');
+            monthNode.classList.add('expanded');
+          }
+        });
+
+        monthLi.appendChild(monthNode);
+        monthLi.appendChild(dateUl);
+        monthUl.appendChild(monthLi);
+      });
+
+      // 点击年份：展开/收起月份列表
+      yearNode.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isOpen = monthUl.classList.contains('open');
+        if (isOpen) {
+          monthUl.classList.remove('open');
+          yearNode.classList.remove('expanded');
+        } else {
+          monthUl.classList.add('open');
+          yearNode.classList.add('expanded');
+        }
+      });
+
+      yearLi.appendChild(yearNode);
+      yearLi.appendChild(monthUl);
+      treeUl.appendChild(yearLi);
+    });
+
+    container.appendChild(treeUl);
+  }
+
+  /**
+   * 跳转指定 index 的日志，如果尚未懒加载，则补齐加载后再跳转
+   */
+  function jumpToLogIndex(targetIndex) {
+    var wrapper = document.getElementById('rendered-log-wrapper');
+    var targetEl = wrapper.querySelector('[data-log-index="' + targetIndex + '"]');
+
+    // 如果还没有加载到该 DOM 节点，持续加载直到包含该节点
+    while (!targetEl && currentIndex < allLogGroups.length) {
+      loadNextBatch();
+      targetEl = wrapper.querySelector('[data-log-index="' + targetIndex + '"]');
+    }
+
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      targetEl.classList.remove('item-highlight');
+      // 强制重绘动画
+      void targetEl.offsetWidth;
+      targetEl.classList.add('item-highlight');
+    }
+
+    // 移动端选中后自动收起侧栏
+    var sidebar = document.getElementById('log-sidebar');
+    if (sidebar) sidebar.classList.remove('mobile-show');
   }
 
   function loadNextBatch() {
@@ -306,5 +621,23 @@ layout: default
     });
 
     observer.observe(triggerEl);
+  }
+
+  function setupMobileSidebar() {
+    var toggleBtn = document.getElementById('sidebar-toggle-btn');
+    var sidebar = document.getElementById('log-sidebar');
+
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        sidebar.classList.toggle('mobile-show');
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+          sidebar.classList.remove('mobile-show');
+        }
+      });
+    }
   }
 </script>
