@@ -22,4 +22,7 @@ exclude:
   - Gemfile.lock
   - blog-template.md
 
-
+collections:
+  logs:
+    output: true
+    permalink: /log/:name/

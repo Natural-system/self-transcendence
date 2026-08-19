@@ -127,9 +127,12 @@ layout: default
     <span id="trigger-text">正在加载更多历史日志...</span>
   </div>
 
-  <!-- 隐藏原始 Markdown HTML 内容供脚本解析 -->
+  <!-- 隐藏原始 Markdown HTML 内容供脚本解析（利用 Jekyll 集合按年份倒序拼接） -->
   <div id="raw-log-content" style="display: none;">
-    {{ content }}
+    {% assign sorted_logs = site.logs | sort: 'year' | reverse %}
+    {% for log in sorted_logs %}
+      {{ log.content }}
+    {% endfor %}
   </div>
 
   <!-- Utterances 评论区系统 -->
