@@ -7,7 +7,7 @@ sitemap: false
   {% for post in site.posts %}
     {% unless post.sitemap == false %}
     <url>
-      <loc>{{ post.url | absolute_url }}</loc>
+      <loc>{{ post.url | absolute_url | xml_escape }}</loc>
       <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
     </url>
     {% endunless %}
@@ -16,7 +16,7 @@ sitemap: false
   {% for page in site.html_pages %}
     {% unless page.sitemap == false or page.url contains "404" %}
     <url>
-      <loc>{{ page.url | absolute_url }}</loc>
+      <loc>{{ page.url | absolute_url | xml_escape }}</loc>
       {% if page.last_modified_at %}
       <lastmod>{{ page.last_modified_at | date_to_xmlschema }}</lastmod>
       {% endif %}
@@ -27,7 +27,7 @@ sitemap: false
   {% for log in site.logs %}
     {% unless log.sitemap == false %}
     <url>
-      <loc>{{ log.url | absolute_url }}</loc>
+      <loc>{{ log.url | absolute_url | xml_escape }}</loc>
     </url>
     {% endunless %}
   {% endfor %}
