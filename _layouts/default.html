@@ -519,6 +519,90 @@
         padding: 16px;
       }
     }
+
+
+    /* ========================================== */
+/* --- 5. 分页导航样式 (Pagination) --- */
+/* ========================================== */
+.pagination, .pager, div[class*="pagin"] {
+  display: flex;
+  justify-content: center; /* 元素水平居中 */
+  align-items: center;     /* 垂直居中对齐 */
+  flex-wrap: wrap;         /* 超出自动换行 */
+  gap: 8px;                /* 按钮/数字之间的间距 */
+  margin: 40px 0 20px 0;   /* 上下间距 */
+  width: 100%;
+}
+
+/* 分页里的链接和数字 */
+.pagination a, 
+.pagination span, 
+.pager a, 
+.pager span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-color);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  text-decoration: none;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+/* 悬停与高亮（当前页）效果 */
+.pagination a:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.pagination .current,
+.pagination .active {
+  background-color: var(--accent-color);
+  color: var(--bg-color) !important;
+  border-color: var(--accent-color);
+}
+
+/* 分页输入框与跳转按钮微调 */
+.pagination input[type="text"],
+.pagination input[type="number"] {
+  width: 50px;
+  height: 32px;
+  padding: 0 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.pagination button, 
+.pagination input[type="button"],
+.pagination input[type="submit"] {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination button:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+
   </style>
 </head>
 <body>
