@@ -594,6 +594,43 @@
       border-color: var(--accent-color);
       color: var(--accent-color);
     }
+
+    /* ========================================== */
+    /* --- 年份归档折叠展开与开关框隐藏 --- */
+    /* ========================================== */
+    .year-toggle-checkbox {
+      display: none !important;
+    }
+
+    .year-block .more-post {
+      display: none;
+    }
+
+    .btn-toggle-year {
+      display: inline-block;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: var(--muted-color);
+      user-select: none;
+    }
+    .btn-toggle-year:hover {
+      color: var(--accent-color);
+    }
+    .btn-collapse {
+      display: none;
+    }
+
+    .year-toggle-checkbox:checked ~ .post-list .more-post {
+      display: flex;
+    }
+
+    .year-toggle-checkbox:checked ~ .btn-expand {
+      display: none;
+    }
+    .year-toggle-checkbox:checked ~ .btn-collapse {
+      display: inline-block;
+    }
   </style>
 </head>
 <body>
