@@ -63,7 +63,7 @@
       --code-border: transparent;
     }
 
-    /* 暗黑模式 (方案 A：代码块用稍亮的灰色 #1e1e1e，加上微弱边框区分界限) */
+    /* 暗黑模式 */
     html[data-theme="dark"] {
       --bg-color: #121212;
       --text-color: #e0e0e0;
@@ -96,7 +96,7 @@
     }
 
     /* ========================================== */
-    /* --- 2. 通用深色代码块样式 (方案 A 适配) --- */
+    /* --- 2. 通用深色代码块样式 --- */
     /* ========================================== */
     .highlight, 
     figure.highlight, 
@@ -273,7 +273,7 @@
 
     header {
       position: relative;
-      z-index: 999; /* 提升层级，确保搜索框位于弹窗遮罩层上方 */
+      z-index: 1000; /* 保证页头与输入框高于遮罩层 */
       margin-bottom: 50px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 20px;
@@ -332,7 +332,7 @@
       width: 150px;
     }
 
-    /* --- 主题切换色彩小圆点组件 (增强防遮挡) --- */
+    /* --- 主题切换色彩小圆点组件 --- */
     .theme-switcher {
       display: inline-flex;
       align-items: center;
@@ -361,7 +361,6 @@
       transform: scale(1.25);
     }
 
-    /* 选中状态显示外环效果 */
     .theme-dot.active {
       box-shadow: 0 0 0 2px var(--bg-color), 0 0 0 4px var(--accent-color);
     }
@@ -613,7 +612,7 @@
       width: 100vw;
       height: 100vh;
       background: rgba(0, 0, 0, 0.4);
-      z-index: 998; /* 调整层级，避免挡住输入框 */
+      z-index: 998;
       backdrop-filter: blur(2px);
     }
 
@@ -677,7 +676,7 @@
           <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
         </div>
 
-        <!-- 主题颜色切换器（双重触发保障） -->
+        <!-- 主题颜色切换器 -->
         <div class="theme-switcher">
           <span class="theme-dot" data-set-theme="light" title="日光模式" onclick="changeTheme('light')"></span>
           <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式" onclick="changeTheme('warm')"></span>
@@ -709,7 +708,7 @@
   </div>
 
   <script>
-    // 0. 主题切换与持久化逻辑（全局可用）
+    // 0. 主题切换与持久化逻辑
     function changeTheme(targetTheme) {
       document.documentElement.setAttribute('data-theme', targetTheme);
       localStorage.setItem('theme', targetTheme);
@@ -738,18 +737,18 @@
       if(pb) pb.style.width = scrolled + "%";
     };
 
-    // 2. 全站全文搜索数据库构建 (采用标准 JSON 序列化，去除多余双引号及换行干扰)
+    // 2. 全站全文搜索数据库构建 (精细化处理 Liquid jsonify，消除多余双引号冲突)
     var globalSearchDB = [
       {% for post in site.posts %}
         {
-          "title": {{ post.title | jsonify }},
-          "url": {{ post.url | relative_url | jsonify }},
-          "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
-          "content": {{ post.content | strip_html | strip_newlines | jsonify }}
+          title: {{ post.title | jsonify }},
+          url: {{ post.url | relative_url | jsonify }},
+          date: {{ post.date | date: "%Y-%m-%d" | jsonify }},
+          content: {{ post.content | strip_html | newline_to_br | strip_newlines | replace: '<br />', ' ' | jsonify }}
         }{% unless forloop.last %},{% endunless %}
       {% endfor %}
     ];
- 
+
     function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
       var query = input.value.trim().toLowerCase();
@@ -763,8 +762,8 @@
       }
 
       var matches = globalSearchDB.filter(function(post) {
-        var matchTitle = post.title.toLowerCase().indexOf(query) !== -1;
-        var matchContent = post.content.toLowerCase().indexOf(query) !== -1;
+        var matchTitle = post.title ? post.title.toLowerCase().indexOf(query) !== -1 : false;
+        var matchContent = post.content ? post.content.toLowerCase().indexOf(query) !== -1 : false;
         return matchTitle || matchContent;
       });
 
