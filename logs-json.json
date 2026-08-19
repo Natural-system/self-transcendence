@@ -1,0 +1,11 @@
+---
+layout: null
+---
+[
+  {% for log in site.logs %}
+    {
+      "key": "{{ log.key }}",
+      "content": {{ log.content | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]

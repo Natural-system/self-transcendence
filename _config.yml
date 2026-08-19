@@ -22,4 +22,8 @@ exclude:
   - Gemfile.lock
   - blog-template.md
 
-
+# 日志集合配置
+collections:
+  logs:
+    output: true
+    permalink: /api/logs/:name.json

@@ -144,28 +144,74 @@ layout: default
   </div>
 </div>
 
-<!-- 三级层级解析 + 字数统计 + 滚动触底自动加载脚本 -->
+<!-- 三级层级解析 + 按文件异步 Fetch 触底无限滚动脚本 -->
 <script>
   var allLogGroups = [];
   var currentIndex = 0;
-  var BATCH_SIZE = 50;   /* 首次及后续每次加载 50 条日志 */
+  var BATCH_SIZE = 50;   /* 每次渲染 50 条日志 */
   var isLoading = false;
+  
+  // 日志文件加载顺序列表（最新在前，最后是 2026 以前）
+  // 到了 2027 年，直接改成 ['2027', '2026', 'before-2026']
+  var logFiles = ['2026', 'before-2026']; 
+  var currentFileIndex = 0;
 
   document.addEventListener("DOMContentLoaded", function() {
-    var rawEl = document.getElementById('raw-log-content');
-    var wrapper = document.getElementById('rendered-log-wrapper');
-    if (!rawEl || !wrapper) return;
+    // 首次载入最新文件的日志
+    fetchAndParseLogFile(logFiles[currentFileIndex], function() {
+      loadNextBatch();
+      setupInfiniteScroll();
+    });
+  });
 
-    // --- 计算全量字数与预计阅读时间 ---
-    calculateLogStats(rawEl);
+  /**
+   * 异步请求指定日志 Key 的 JSON 数据并解析
+   */
+  function fetchAndParseLogFile(fileKey, callback) {
+    isLoading = true;
+    var triggerText = document.getElementById('trigger-text');
+    if (triggerText) {
+      triggerText.textContent = fileKey === 'before-2026' ? '正在加载 2026 年以前的历史日志...' : '正在加载 ' + fileKey + ' 年日志...';
+    }
 
+    var baseUrl = "{{ site.baseurl }}";
+    var logUrl = baseUrl + '/api/logs/' + fileKey + '.json';
+
+    fetch(logUrl)
+      .then(function(response) {
+        if (!response.ok) throw new Error('网络响应异常');
+        return response.json();
+      })
+      .then(function(data) {
+        // 创建临时 DOM 节点解析 HTML 内容
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = data.content || '';
+
+        // 计算字数与阅读时间
+        calculateLogStats(tempDiv);
+
+        // 解析节点进入分组数组
+        parseNodesToGroups(tempDiv);
+
+        isLoading = false;
+        if (callback) callback();
+      })
+      .catch(function(err) {
+        console.error('加载日志失败:', err);
+        isLoading = false;
+      });
+  }
+
+  /**
+   * 解析 HTML 节点为三级日志分组
+   */
+  function parseNodesToGroups(rawEl) {
     var nodes = Array.from(rawEl.children);
     var currentItem = null;
 
     nodes.forEach(function(node) {
       var tag = node.tagName.toLowerCase();
 
-      // 1. 解析 # 2026 年 为年份大标题
       if (tag === 'h1') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -173,7 +219,6 @@ layout: default
         }
         allLogGroups.push({ type: 'year', node: node });
       } 
-      // 2. 解析 ## 08 月 为月份中标题
       else if (tag === 'h2') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -181,7 +226,6 @@ layout: default
         }
         allLogGroups.push({ type: 'month', node: node });
       }
-      // 3. 解析 ### 08-14 为具体日志条目
       else if (tag === 'h3') {
         if (currentItem) {
           allLogGroups.push({ type: 'item', node: currentItem });
@@ -198,30 +242,24 @@ layout: default
     if (currentItem) {
       allLogGroups.push({ type: 'item', node: currentItem });
     }
-
-    loadNextBatch();
-    setupInfiniteScroll();
-  });
+  }
 
   /**
-   * 统计全页字数及计算预计阅读时间
+   * 累加字数与阅读时间
    */
+  var totalWordsAccumulated = 0;
   function calculateLogStats(rawEl) {
     var text = rawEl.textContent || rawEl.innerText || '';
-
-    // 匹配中文字符及英文单词
     var cjkCount = (text.match(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
     var englishWordsCount = (text.replace(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g, ' ').match(/\b\w+\b/g) || []).length;
 
-    var totalWords = cjkCount + englishWordsCount;
-
-    // 按 400 字/分钟速度计算阅读时长
-    var readTime = Math.max(1, Math.ceil(totalWords / 400));
+    totalWordsAccumulated += (cjkCount + englishWordsCount);
+    var readTime = Math.max(1, Math.ceil(totalWordsAccumulated / 400));
 
     var wordCountEl = document.getElementById('log-word-count');
     var readTimeEl = document.getElementById('log-read-time');
 
-    if (wordCountEl) wordCountEl.textContent = totalWords.toLocaleString();
+    if (wordCountEl) wordCountEl.textContent = totalWordsAccumulated.toLocaleString();
     if (readTimeEl) readTimeEl.textContent = readTime;
   }
 
@@ -271,11 +309,20 @@ layout: default
 
     var totalItems = allLogGroups.filter(g => g.type === 'item').length;
     var currentRenderedItems = wrapper.querySelectorAll('.log-item').length;
-    var remaining = totalItems - currentRenderedItems;
 
-    if (remaining > 0) {
+    // 当当前数据包渲染完毕，且还有后续历史文件未请求时，加载下一个文件
+    if (currentIndex >= allLogGroups.length && currentFileIndex + 1 < logFiles.length) {
+      currentFileIndex++;
+      fetchAndParseLogFile(logFiles[currentFileIndex], function() {
+        isLoading = false;
+        loadNextBatch();
+      });
+      return;
+    }
+
+    if (currentRenderedItems < totalItems || currentFileIndex + 1 < logFiles.length) {
       triggerBox.style.display = 'block';
-      triggerText.textContent = '向下滚动加载更多历史日志 (剩余 ' + remaining + ' 条)';
+      triggerText.textContent = '向下滚动加载更多历史日志...';
     } else {
       triggerBox.style.display = 'block';
       triggerText.textContent = '— 已加载全部随想日志 —';
@@ -290,13 +337,7 @@ layout: default
 
     var observer = new IntersectionObserver(function(entries) {
       if (entries[0].isIntersecting) {
-        var totalItems = allLogGroups.filter(g => g.type === 'item').length;
-        var wrapper = document.getElementById('rendered-log-wrapper');
-        var currentRenderedItems = wrapper ? wrapper.querySelectorAll('.log-item').length : 0;
-
-        if (currentRenderedItems < totalItems) {
-          loadNextBatch();
-        }
+        loadNextBatch();
       }
     }, {
       rootMargin: '200px'
