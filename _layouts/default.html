@@ -624,45 +624,56 @@
       {% endfor %}
     ];
 
-    function handleGlobalSearch() {
-      var input = document.getElementById('global-search-input');
-      var query = input.value.trim().toLowerCase();
-      var overlay = document.getElementById('search-modal-overlay');
-      var listContainer = document.getElementById('search-results-list');
-      var noResultEl = document.getElementById('search-no-results');
+function handleGlobalSearch() {
+  var input = document.getElementById('global-search-input');
+  if (!input) return;
+  
+  var query = input.value.trim().toLowerCase();
+  var overlay = document.getElementById('search-modal-overlay');
+  var listContainer = document.getElementById('search-results-list');
+  var noResultEl = document.getElementById('search-no-results');
 
-      if (!query) {
-        overlay.style.display = 'none';
-        return;
-      }
+  if (!query) {
+    overlay.style.display = 'none';
+    return;
+  }
 
-      var matches = globalSearchDB.filter(function(post) {
-        var matchTitle = post.title ? post.title.toLowerCase().indexOf(query) !== -1 : false;
-        var matchContent = post.content ? post.content.toLowerCase().indexOf(query) !== -1 : false;
-        return matchTitle || matchContent;
-      });
+  var matches = globalSearchDB.filter(function(post) {
+    // 🛡️ 强类型防空安全转换：强制转换为字符串，即使是 null / undefined 也绝不报错
+    var safeTitle = String(post.title || '').toLowerCase();
+    var safeContent = String(post.content || '').toLowerCase();
 
-      overlay.style.display = 'block';
+    var matchTitle = safeTitle.indexOf(query) !== -1;
+    var matchContent = safeContent.indexOf(query) !== -1;
+    
+    return matchTitle || matchContent;
+  });
 
-      if (matches.length === 0) {
-        listContainer.innerHTML = '';
-        noResultEl.style.display = 'block';
-      } else {
-        noResultEl.style.display = 'none';
-        var html = '';
-        matches.forEach(function(post, idx) {
-          var seq = (idx + 1 < 10 ? '0' : '') + (idx + 1);
-          html += '<li class="post-item">' +
-                    '<div class="post-left">' +
-                      '<span class="post-index">' + seq + '</span>' +
-                      '<a class="post-title" href="' + post.url + '">' + post.title + '</a>' +
-                    '</div>' +
-                    '<span class="post-date">' + post.date + '</span>' +
-                  '</li>';
-        });
-        listContainer.innerHTML = html;
-      }
-    }
+  overlay.style.display = 'block';
+
+  if (matches.length === 0) {
+    listContainer.innerHTML = '';
+    noResultEl.style.display = 'block';
+  } else {
+    noResultEl.style.display = 'none';
+    var html = '';
+    matches.forEach(function(post, idx) {
+      var seq = (idx + 1 < 10 ? '0' : '') + (idx + 1);
+      var displayTitle = post.title || '无标题文章';
+      var displayUrl = post.url || '#';
+      var displayDate = post.date || '';
+
+      html += '<li class="post-item">' +
+                '<div class="post-left">' +
+                  '<span class="post-index">' + seq + '</span>' +
+                  '<a class="post-title" href="' + displayUrl + '">' + displayTitle + '</a>' +
+                '</div>' +
+                '<span class="post-date">' + displayDate + '</span>' +
+              '</li>';
+    });
+    listContainer.innerHTML = html;
+  }
+}
 
     function closeSearchModal(e) {
       if (e.target.id === 'search-modal-overlay') {
