@@ -521,87 +521,40 @@
     }
 
 
-    /* ========================================== */
-/* --- 5. 分页导航样式 (Pagination) --- */
-/* ========================================== */
-.pagination, .pager, div[class*="pagin"] {
-  display: flex;
-  justify-content: center; /* 元素水平居中 */
-  align-items: center;     /* 垂直居中对齐 */
-  flex-wrap: wrap;         /* 超出自动换行 */
-  gap: 8px;                /* 按钮/数字之间的间距 */
-  margin: 40px 0 20px 0;   /* 上下间距 */
-  width: 100%;
+/* 确保分页容器 flex 布局并居中 */
+.pagination {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-wrap: wrap; /* 防止小屏拉伸 */
+  gap: 8px !important; /* 关键：强制拉开数字、按钮、输入框之间的间距 */
+  margin: 25px 0 !important;
 }
 
-/* 分页里的链接和数字 */
-.pagination a, 
-.pagination span, 
-.pager a, 
-.pager span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid var(--border-color);
+/* 统一页码与按钮样式 */
+.pagination a,
+.pagination span,
+.pagination button {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid #d0d7de;
   border-radius: 4px;
-  color: var(--text-color);
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
   text-decoration: none;
-  background-color: transparent;
-  transition: all 0.2s ease;
+  color: #333;
+  font-size: 14px;
 }
 
-/* 悬停与高亮（当前页）效果 */
-.pagination a:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  text-decoration: none;
-}
-
-.pagination .current,
-.pagination .active {
-  background-color: var(--accent-color);
-  color: var(--bg-color) !important;
-  border-color: var(--accent-color);
-}
-
-/* 分页输入框与跳转按钮微调 */
+/* 页码输入框样式 */
 .pagination input[type="text"],
 .pagination input[type="number"] {
-  width: 50px;
-  height: 32px;
-  padding: 0 6px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  width: 45px;
+  height: 28px;
+  padding: 2px 5px;
   text-align: center;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.pagination button, 
-.pagination input[type="button"],
-.pagination input[type="submit"] {
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #ccc;
   border-radius: 4px;
-  background-color: rgba(0, 0, 0, 0.05);
-  color: var(--text-color);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  margin: 0 4px;
 }
-
-.pagination button:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-}
-
 
   </style>
 </head>
