@@ -77,3 +77,75 @@ permalink: /archive/
     </div>
   {% endfor %}
 </div>
+
+<!-- CSS 样式修正与新视觉增强 -->
+<style>
+  /* 1. 彻底隐藏复选框（解决白色小框 Bug） */
+  .year-toggle-checkbox {
+    display: none !important;
+  }
+
+  /* 2. 默认收起状态：隐藏第 10 篇之后的文章 */
+  .year-block .more-post {
+    display: none;
+  }
+
+  /* 3. 默认收起状态：第 9 和第 10 篇文章呈现逐渐变淡效果 */
+  .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+  .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
+    opacity: 0.25;
+    transition: opacity 0.3s ease;
+  }
+
+  /* 4. 当点击展开时（:checked）：恢复所有文章 100% 正常不透明度 */
+  .year-toggle-checkbox:checked ~ .post-list .post-item {
+    opacity: 1;
+  }
+  .year-toggle-checkbox:checked ~ .post-list .more-post {
+    display: flex;
+  }
+
+  /* 5. 醒目的“展开/收起”按钮样式（微块/胶囊风格） */
+  .btn-toggle-year {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 6px 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-color);
+    background-color: rgba(0, 0, 0, 0.035);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+  }
+
+  /* 暗黑模式适配按钮背景 */
+  html[data-theme="dark"] .btn-toggle-year {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  /* 悬停效果：边框与文字高亮 */
+  .btn-toggle-year:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+    background-color: rgba(0, 0, 0, 0.06);
+  }
+
+  /* 6. 切换展开与收起按钮的显隐 */
+  .btn-collapse {
+    display: none;
+  }
+  .year-toggle-checkbox:checked ~ .btn-expand {
+    display: none;
+  }
+  .year-toggle-checkbox:checked ~ .btn-collapse {
+    display: inline-flex;
+  }
+</style>
