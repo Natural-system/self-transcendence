@@ -255,7 +255,7 @@
       width: 100%;
       height: 3px;
       background: transparent;
-      z-index: 9999;
+      z-index: 9998;
     }
     .progress-bar {
       height: 3px;
@@ -273,7 +273,7 @@
 
     header {
       position: relative;
-      z-index: 1000; /* 保证页头与输入框高于遮罩层 */
+      z-index: 100;
       margin-bottom: 50px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 20px;
@@ -380,7 +380,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      padding: 6px 0;
+      padding: 8px 0;
       border-bottom: 1px dashed var(--border-color);
     }
 
@@ -480,169 +480,44 @@
       text-align: center;
     }
 
-    .pagination {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-color);
-      font-size: 0.9rem;
-      font-family: var(--font-mono);
-    }
-
-    .pagination a, .pagination button {
-      background: transparent;
-      border: 1px solid var(--border-color);
-      color: var(--text-color);
-      padding: 4px 10px;
-      border-radius: 3px;
-      cursor: pointer;
-      text-decoration: none;
-      font-family: inherit;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-
-    .pagination a:hover, .pagination button:hover {
-      border-color: var(--accent-color);
-      background-color: rgba(0, 0, 0, 0.05);
-      text-decoration: none;
-    }
-
-    .pagination .active {
-      background-color: var(--accent-color);
-      color: var(--bg-color);
-      border-color: var(--accent-color);
-    }
-
-    .pagination .disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      border-color: var(--border-color) !important;
-      background: transparent !important;
-    }
-
-    .pagination-jump {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: 8px;
-    }
-
-    .pagination-jump input {
-      width: 42px;
-      padding: 4px 6px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-color);
-      color: var(--text-color);
-      border-radius: 3px;
-      text-align: center;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      outline: none;
-    }
-
-    .pagination-jump input:focus {
-      border-color: var(--accent-color);
-    }
-
-    /* 年份归档折叠控制 */
-    .year-toggle-checkbox {
-      display: none;
-    }
-
-    .year-block .post-list .more-post {
-      display: none;
-    }
-
-    .btn-toggle-year {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 14px;
-      padding: 8px 18px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: var(--text-color);
-      background-color: rgba(0, 0, 0, 0.04);
-      border: 1px solid var(--border-color);
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    }
-
-    .btn-toggle-year:hover {
-      color: var(--bg-color);
-      background-color: var(--accent-color);
-      border-color: var(--accent-color);
-    }
-
-    .btn-toggle-year .arrow-icon {
-      font-size: 0.85rem;
-      font-weight: bold;
-      line-height: 1;
-    }
-
-    .btn-collapse {
-      display: none;
-    }
-
-    .year-toggle-checkbox:checked ~ .post-list .more-post {
-      display: flex !important;
-    }
-
-    .year-toggle-checkbox:checked ~ .btn-expand {
-      display: none !important;
-    }
-
-    .year-toggle-checkbox:checked ~ .btn-collapse {
-      display: inline-flex !important;
-    }
-
-    /* 全局搜索弹窗样式 */
+    /* ========================================== */
+    /* --- 4. 彻底脱离文档流的全局搜索弹窗样式 --- */
+    /* ========================================== */
     #search-modal-overlay {
       display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 998;
-      backdrop-filter: blur(2px);
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(0, 0, 0, 0.5) !important;
+      z-index: 9999 !important; /* 最高层级，彻底隔离原网页 */
+      backdrop-filter: blur(4px);
+      box-sizing: border-box;
     }
 
     .search-modal-content {
+      position: relative;
       max-width: 680px;
-      margin: 180px auto 0;
+      width: 90%;
+      margin: 100px auto 0;
       background: var(--bg-color);
       color: var(--text-color);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 20px;
-      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
-      max-height: 60vh;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      max-height: 70vh;
       overflow-y: auto;
+      box-sizing: border-box;
     }
 
-    /* 年份归档未展开时的渐隐效果 */
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9) {
-      opacity: 0.65;
-      transition: opacity 0.3s ease;
-    }
-
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10) {
-      opacity: 0.35;
-      transition: opacity 0.3s ease;
-    }
-
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(9):hover,
-    .year-toggle-checkbox:not(:checked) ~ .post-list .post-item:nth-child(10):hover {
-      opacity: 1;
+    @media (max-width: 600px) {
+      .search-modal-content {
+        margin: 50px auto 0;
+        width: 95%;
+        padding: 16px;
+      }
     }
   </style>
 </head>
@@ -695,12 +570,12 @@
     </footer>
   </div>
 
-  <!-- 全局搜索弹窗组件 -->
+  <!-- 全局搜索弹窗组件（脱离普通文档流） -->
   <div id="search-modal-overlay" onclick="closeSearchModal(event)">
     <div class="search-modal-content" onclick="event.stopPropagation()">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
-        <h3 style="margin:0; font-size: 1.05rem; color:var(--text-color);">搜索结果</h3>
-        <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.4rem; color:var(--muted-color); line-height: 1;">&times;</span>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px;">
+        <h3 style="margin:0; font-size: 1.1rem; color:var(--text-color);">搜索结果</h3>
+        <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.5rem; color:var(--muted-color); line-height: 1;">&times;</span>
       </div>
       <ul id="search-results-list" class="post-list"></ul>
       <div id="search-no-results" style="display:none; color:var(--muted-color); font-size:0.9rem; padding: 15px 0;">未找到相关文章</div>
@@ -737,7 +612,7 @@
       if(pb) pb.style.width = scrolled + "%";
     };
 
-    // 2. 全站全文搜索数据库构建 (精细化处理 Liquid jsonify，消除多余双引号冲突)
+    // 2. 全站全文搜索数据库构建 (正确 JSON 序列化)
     var globalSearchDB = [
       {% for post in site.posts %}
         {
@@ -790,7 +665,9 @@
     }
 
     function closeSearchModal(e) {
-      document.getElementById('search-modal-overlay').style.display = 'none';
+      if (e.target.id === 'search-modal-overlay') {
+        document.getElementById('search-modal-overlay').style.display = 'none';
+      }
     }
 
     function closeSearchModalDirect() {
