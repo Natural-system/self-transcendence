@@ -74,7 +74,46 @@ title: 首页
     paginationContainer.style.display = 'flex';
 
     var pagHtml = '';
-    for (var i = 1; i <= totalPages; i++) {
+
+    // 1. 首页与上一页
+    if (currentPage > 1) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(1)">首页</a>';
+      pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(' + (currentPage - 1) + ')">上一页</a>';
+    } else {
+      pagHtml += '<span class="disabled">首页</span>';
+      pagHtml += '<span class="disabled">上一页</span>';
+    }
+
+    // 2. 滑动窗口核心逻辑：控制连续显示的页码始终保持在 10 个左右
+    var startPage, endPage;
+    var maxVisiblePages = 10;
+
+    if (totalPages <= maxVisiblePages) {
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      if (currentPage <= 6) {
+        startPage = 1;
+        endPage = 10;
+      } else if (currentPage + 4 >= totalPages) {
+        startPage = totalPages - 9;
+        endPage = totalPages;
+      } else {
+        startPage = currentPage - 4;
+        endPage = currentPage + 5;
+      }
+    }
+
+    // 3. 前置省略号处理
+    if (startPage > 1) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(1)">1</a>';
+      if (startPage > 2) {
+        pagHtml += '<span class="ellipsis">...</span>';
+      }
+    }
+
+    // 4. 渲染 10 个左右的动态页码
+    for (var i = startPage; i <= endPage; i++) {
       if (i === currentPage) {
         pagHtml += '<span class="active">' + i + '</span>';
       } else {
@@ -82,19 +121,25 @@ title: 首页
       }
     }
 
-    if (currentPage < totalPages) {
-      pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(' + (currentPage + 1) + ')">下一页</a>';
-    } else {
-      pagHtml += '<span class="disabled">下一页</span>';
+    // 5. 后置省略号与最后一页处理
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pagHtml += '<span class="ellipsis">...</span>';
+      }
+      pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(' + totalPages + ')">' + totalPages + '</a>';
     }
 
+    // 6. 下一页与末页
     if (currentPage < totalPages) {
+      pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(' + (currentPage + 1) + ')">下一页</a>';
       pagHtml += '<a href="javascript:void(0)" onclick="goToHomePaging(' + totalPages + ')">末页</a>';
     } else {
+      pagHtml += '<span class="disabled">下一页</span>';
       pagHtml += '<span class="disabled">末页</span>';
     }
 
-    pagHtml += '<div class="pagination-jump">' +
+    // 7. 跳转输入框
+    pagHtml += '<div class="pagination-jump" style="display:inline-flex; align-items:center; margin-left:6px;">' +
                  '<input type="number" id="home-jump-input" min="1" max="' + totalPages + '" placeholder="' + currentPage + '">' +
                  '<button type="button" onclick="handleHomeJump(' + totalPages + ')">跳转</button>' +
                '</div>';
