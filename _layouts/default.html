@@ -736,18 +736,20 @@
       if(pb) pb.style.width = scrolled + "%";
     };
 
-    // 2. 全站全文搜索数据库构建
-    var globalSearchDB = [
-      {% for post in site.posts %}
-        {
-          "title": {{ post.title | jsonify }},
-          "url": {{ post.url | relative_url | jsonify }},
-          "date": "{{ post.date | date: '%Y-%m-%d' }}",
-          "content": {{ post.content | strip_html | strip_newlines | jsonify }}
-        }{% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    ];
 
+// 2. 全站全文搜索数据库构建 (移除多余的双引号，确保 JSON 规范)
+var globalSearchDB = [
+  {% for post in site.posts %}
+    {
+      "title": {{ post.title | jsonify }},
+      "url": {{ post.url | relative_url | jsonify }},
+      "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
+      "content": {{ post.content | strip_html | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+];
+ 
+ 
     function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
       var query = input.value.trim().toLowerCase();
