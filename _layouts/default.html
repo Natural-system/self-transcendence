@@ -762,6 +762,62 @@ function handleGlobalSearch() {
         pre.appendChild(btn);
       });
     });
+
+    // 自动化折叠分页：超过 10 页自动添加省略号和最后一页
+document.addEventListener('DOMContentLoaded', function() {
+  var pagination = document.querySelector('.pagination');
+  if (!pagination) return;
+
+  // 获取所有纯页码链接/节点（过滤掉“下一页”、“末页”和跳转控件）
+  var allNodes = Array.from(pagination.childNodes);
+  var pageLinks = [];
+  
+  allNodes.forEach(function(node) {
+    if (node.tagName === 'A' || node.tagName === 'SPAN') {
+      var txt = node.textContent.trim();
+      // 判断是否为纯数字页码
+      if (/^\d+$/.test(txt)) {
+        pageLinks.push({
+          num: parseInt(txt, 10),
+          element: node
+        });
+      }
+    }
+  });
+
+  var totalPages = pageLinks.length;
+
+  // 如果页码总数超过 10 页，进行裁剪
+  if (totalPages > 10) {
+    var currentPageObj = pageLinks.find(function(item) {
+      return item.element.classList.contains('current') || item.element.classList.contains('active');
+    });
+    var currentPage = currentPageObj ? currentPageObj.num : 1;
+
+    // 当当前页在第 1~10 页范围内时
+    if (currentPage <= 10) {
+      pageLinks.forEach(function(item) {
+        if (item.num > 10 && item.num < totalPages) {
+          // 隐藏第 11 页到倒数第二页
+          item.element.style.display = 'none';
+        }
+      });
+
+      // 创建省略号元素
+      var ellipsis = document.createElement('span');
+      ellipsis.className = 'ellipsis';
+      ellipsis.innerText = '...';
+      ellipsis.style.padding = '4px 8px';
+      ellipsis.style.color = 'var(--muted-color)';
+
+      // 找到第 10 页元素，并在其后面插入省略号
+      var page10Item = pageLinks.find(function(item) { return item.num === 10; });
+      if (page10Item && page10Item.element.nextSibling) {
+        pagination.insertBefore(ellipsis, page10Item.element.nextSibling);
+      }
+    }
+  }
+});
   </script>
 </body>
 </html>
