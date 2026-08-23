@@ -632,13 +632,19 @@
       display: inline-block;
     }
    
-/* 仅给文章正文段落、列表项中的超链接加下划线，排除文章列表标题 */
+/* 1. 仅给正文段落和列表中的超链接加下划线 */
 main p a, 
-main li:not(.post-item) a, 
 .post-content p a, 
 .post-content li a {
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+/* 2. 强制排除侧边栏目录、归档列表和导航栏，确保其链接无下划线 */
+.sidebar-toc a,
+.post-item a,
+nav.site-nav a {
+  text-decoration: none !important;
 }
     </style>
 </head>
