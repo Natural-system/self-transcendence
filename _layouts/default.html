@@ -631,7 +631,13 @@
     .year-toggle-checkbox:checked ~ .btn-collapse {
       display: inline-block;
     }
-  </style>
+   
+    /* 仅控制正文区域内的超链接 */
+    main a, article a, .post-content a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    </style>
 </head>
 <body>
 
