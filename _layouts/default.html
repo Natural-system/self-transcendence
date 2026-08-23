@@ -632,11 +632,14 @@
       display: inline-block;
     }
    
-    /* 仅控制正文区域内的超链接 */
-    main a, article a, .post-content a {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
+/* 仅给文章正文段落、列表项中的超链接加下划线，排除文章列表标题 */
+main p a, 
+main li:not(.post-item) a, 
+.post-content p a, 
+.post-content li a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
     </style>
 </head>
 <body>
