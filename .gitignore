@@ -11,3 +11,9 @@ _posts/*.log
 # 忽略 Typora 破解/Hook 产生的动态日志文件
 Typora_Hook_Log*
 _posts/Typora_Hook_Log*
+
+# Mac 系统配置文件
+.DS_Store
+
+# 部署生成的结构文本
+structure.txt
