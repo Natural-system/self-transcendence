@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "菊酯和拟除虫菊酯的区别（摘译自Jack DeAngelis博士网站）"
+title: "菊酯和拟除虫菊酯的区别-翻译"
 date: 2014-08-28
 categories: 其他
 ---

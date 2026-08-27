@@ -1,8 +1,8 @@
 ﻿---
 layout: post
-title: "How we eat alone（食之无味）-童健|摘译"
+title: "How we eat alone（食之无味）-翻译"
 date: 2019-09-26
-categories: 其他
+categories: 饮食
 ---
 
 > 这篇文章是2019年前后，我基于 WordPress网站的老文章，属于重新搬运过来，如果有些资源、信息或链接过时了，是正常现象——本文译文，译者为童健。

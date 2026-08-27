@@ -1,8 +1,8 @@
 ﻿---
 layout: post
-title: "Got troubles? Don’t chew them over(有烦恼？不要像牛一样去反复“咀嚼”它们)"
+title: "Got troubles? Don’t chew them over(有烦恼？不要像牛一样去反复“咀嚼”它们)翻译"
 date: 2019-12-18
-categories: 其他
+categories: 书影
 ---
 
 > 这篇文章是2019年前后，我基于 WordPress网站的老文章，属于重新搬运过来，如果有些资源、信息或链接过时了，是正常现象。
