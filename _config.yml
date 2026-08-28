@@ -7,7 +7,6 @@ description: >-
 baseurl: "/self-transcendence"
 url: "https://natural-system.github.io"
 
-
 # 核心修正：禁用默认主题，完全使用本地自定义模板 (_layouts)
 # theme: jekyll-theme-primer
 
@@ -27,3 +26,11 @@ collections:
   logs:
     output: true
     permalink: /log/:name/
+
+    # 批量覆盖所有文章的 permalink 规则
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      permalink: /posts/:year-:month-:day-:title/
