@@ -7,6 +7,9 @@ description: >-
 baseurl: "/self-transcendence"
 url: "https://natural-system.github.io"
 
+# 【只需新增下面这一行】
+permalink: /posts/:year-:month-:day-:slug/
+
 # 核心修正：禁用默认主题，完全使用本地自定义模板 (_layouts)
 # theme: jekyll-theme-primer
 
