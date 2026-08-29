@@ -19,21 +19,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
         with:
-          ruby-version: '3.1'
-          bundler-cache: true
-
-      - name: Build with Jekyll (Enable Plugins)
-        run: |
-          bundle exec jekyll build
-
+          source: ./
+          destination: ./_site
+          # 关键配置：强制禁用 Safe 模式，允许加载 _plugins 插件
+          args: --no-safe
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./_site
 
   deploy:
     environment:
