@@ -26,14 +26,3 @@ collections:
   logs:
     output: true
     permalink: /log/:name/
-
-# 批量覆盖所有文章的 permalink 规则（顶格编写，与 collections 平级）
-defaults:
-  - scope:
-      path: ""
-      type: "posts"
-    values:
-      # 格式为：/p/年/月/日/时分秒/
-      permalink: /p/:year/:month/:day/:hour:minute:second/
-      #原来 ID 不可变容易导致同一天内发布多篇文章产生命名冲突。网址结尾强行定义为“时+分+秒”
-      #permalink: /p/:year/:month/:day/:i_day/
