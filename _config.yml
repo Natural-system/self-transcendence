@@ -27,10 +27,10 @@ collections:
     output: true
     permalink: /log/:name/
 
-# 批量覆盖所有文章的 permalink 规则（顶格编写，与 collections 平级）
+# 使用 raw 滤镜截断标题，仅保留日期与极简后缀
 defaults:
   - scope:
       path: ""
       type: "posts"
     values:
-      permalink: /p/:year/:month/:day/:i_day/
+      permalink: /p/:year/:month/:day/post-:slugify.html
