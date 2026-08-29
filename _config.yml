@@ -33,4 +33,6 @@ defaults:
       path: ""
       type: "posts"
     values:
-      permalink: /p/:year/:month/:day/:i_day/
+      permalink: /p/:year/:month/:day/:slugify/     
+      #原来 ID 不可变容易导致同一天内发布多篇文章产生命名冲突。
+      #permalink: /p/:year/:month/:day/:i_day/
