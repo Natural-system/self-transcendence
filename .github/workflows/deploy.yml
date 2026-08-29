@@ -19,15 +19,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # 新增：在 Jekyll 编译前注入 permalink
+      - name: Inject Short Permalinks via Python
+        run: python patch_permalink.py
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
           destination: ./_site
-          # 关键配置：强制禁用 Safe 模式，允许加载 _plugins 插件
-          args: --no-safe
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
