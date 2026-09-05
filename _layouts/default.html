@@ -755,17 +755,17 @@ nav.site-nav a:hover {
     </footer>
   </div>
 
-  <!-- 全局搜索弹窗组件（脱离普通文档流） -->
-  <div id="search-modal-overlay" onclick="closeSearchModal(event)">
-    <div class="search-modal-content" onclick="event.stopPropagation()">
-      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px;">
-        <h3 style="margin:0; font-size: 1.1rem; color:var(--text-color);">搜索结果</h3>
-        <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.5rem; color:var(--muted-color); line-height: 1;">&times;</span>
-      </div>
-      <ul id="search-results-list" class="post-list"></ul>
-      <div id="search-no-results" style="display:none; color:var(--muted-color); font-size:0.9rem; padding: 15px 0;">未找到相关文章</div>
+<!-- 全局搜索弹窗组件（脱离普通文档流） -->
+<div id="search-modal-overlay" onclick="closeSearchModal(event)">
+  <div class="search-modal-content" onclick="event.stopPropagation()">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px;">
+      <h3 id="search-modal-title" style="margin:0; font-size: 1.1rem; color:var(--text-color);">搜索结果</h3>  <!-- 👈 加了 id="search-modal-title" -->
+      <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.5rem; color:var(--muted-color); line-height: 1;">&times;</span>
     </div>
+    <ul id="search-results-list" class="post-list"></ul>
+    <div id="search-no-results" style="display:none; color:var(--muted-color); font-size:0.9rem; padding: 15px 0;">未找到相关文章</div>
   </div>
+</div>
 
   <script>
     // 0. 主题切换与持久化逻辑
@@ -809,7 +809,7 @@ nav.site-nav a:hover {
       {% endfor %}
     ];
 
-    function handleGlobalSearch() {
+function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
       if (!input) return;
       
@@ -817,24 +817,50 @@ nav.site-nav a:hover {
       var overlay = document.getElementById('search-modal-overlay');
       var listContainer = document.getElementById('search-results-list');
       var noResultEl = document.getElementById('search-no-results');
+      var titleEl = document.getElementById('search-modal-title'); // 标题元素
 
       if (!query) {
         overlay.style.display = 'none';
         return;
       }
 
-      var matches = globalSearchDB.filter(function(post) {
+      // 1. 转义正则特殊字符
+      var escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      var regex = new RegExp(escapedQuery, 'gi');
+
+      var matches = [];
+      var grandTotalCount = 0; // 全站累计出现的总次数
+
+      // 2. 遍历数据库计算匹配项与频次
+      globalSearchDB.forEach(function(post) {
         var safeTitle = String(post.title || '').toLowerCase();
         var safeContent = String(post.content || '').toLowerCase();
 
-        var matchTitle = safeTitle.indexOf(query) !== -1;
-        var matchContent = safeContent.indexOf(query) !== -1;
-        
-        return matchTitle || matchContent;
+        var titleMatches = safeTitle.match(regex);
+        var contentMatches = safeContent.match(regex);
+
+        var titleCount = titleMatches ? titleMatches.length : 0;
+        var contentCount = contentMatches ? contentMatches.length : 0;
+        var totalCount = titleCount + contentCount;
+
+        if (totalCount > 0) {
+          grandTotalCount += totalCount; // 累加全站总次数
+          matches.push(post);
+        }
       });
 
       overlay.style.display = 'block';
 
+      // 3. 动态更新弹窗顶部的标题文字
+      if (titleEl) {
+        if (matches.length > 0) {
+          titleEl.innerText = '搜索结果（关键词出现 ' + grandTotalCount + ' 次）';
+        } else {
+          titleEl.innerText = '搜索结果';
+        }
+      }
+
+      // 4. 渲染文章列表
       if (matches.length === 0) {
         listContainer.innerHTML = '';
         noResultEl.style.display = 'block';
@@ -858,7 +884,6 @@ nav.site-nav a:hover {
         listContainer.innerHTML = html;
       }
     }
-
     function closeSearchModal(e) {
       if (e.target.id === 'search-modal-overlay') {
         document.getElementById('search-modal-overlay').style.display = 'none';
