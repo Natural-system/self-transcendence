@@ -632,20 +632,28 @@
       display: inline-block;
     }
    
-/* 1. 仅给正文段落和列表中的超链接加下划线 */
-main p a, 
-.post-content p a, 
-.post-content li a {
+/* 1. 全局给 main 正文区域内的所有超链接加下划线 */
+main a {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-/* 2. 强制排除侧边栏目录、归档列表和导航栏，确保其链接无下划线 */
+/* 2. 强制排除导航栏、页头、目录、列表项等非文章正文的链接，保持无下划线 */
+nav.site-nav a,
+.site-title a,
 .sidebar-toc a,
 .post-item a,
-nav.site-nav a {
+.pagination a,
+.theme-switcher a,
+.btn-toggle-year {
   text-decoration: none !important;
 }
+
+/* 3. 悬停保持原有的样式效果 */
+nav.site-nav a:hover {
+  text-decoration: none !important;
+}
+
 /* --- 目录悬停悬浮特效（平滑右移 + 悬停高亮） --- */
 .sidebar-toc a {
   display: inline-block;

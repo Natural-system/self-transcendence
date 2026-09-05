@@ -2,6 +2,21 @@
 layout: default
 ---
 
+<style>
+  /* 仅针对文章正文区域内的超链接添加下划线 */
+  .article-body a {
+    text-decoration: underline;
+    /* 可选：设置下划线颜色和距离 */
+    text-decoration-color: currentColor; 
+    text-underline-offset: 3px; 
+  }
+  
+  /* 悬停时的视觉反馈（可选） */
+  .article-body a:hover {
+    text-decoration-style: wavy; /* 鼠标悬停时变成波浪下划线，不想要可以删掉这行 */
+  }
+</style>
+
 <div class="layout-grid">
   <!-- 左侧固定悬浮目录 -->
   <aside class="sidebar-toc">
