@@ -249,6 +249,62 @@ main img, article img {
       height: auto;
     }
 
+/* ========================================== */
+    /* --- 目录（TOC）嵌套自适应层级样式 --- */
+    /* ========================================== */
+    .sidebar-toc {
+      font-size: 0.85rem !important;
+    }
+
+    /* 清除默认列表缩进与边框 */
+    .sidebar-toc ul {
+      list-style: none !important;
+      padding-left: 0 !important;
+      margin: 4px 0 !important;
+    }
+
+    /* 无论从 h1 还是 h2 开始，目录出现的【第一层】永远作为主层级 */
+    .sidebar-toc > ul > li {
+      margin-top: 6px;
+    }
+
+    .sidebar-toc > ul > li > a {
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+      color: var(--text-color) !important;
+      line-height: 1.5;
+    }
+
+    /* 嵌套的【第二层】（自适应缩进） */
+    .sidebar-toc ul ul {
+      padding-left: 12px !important; /* 向右平滑缩进 12px */
+      margin-top: 2px !important;
+      border-left: 1px dashed var(--border-color); /* 左侧极其纤细的浅色引导虚线 */
+    }
+
+    .sidebar-toc ul ul a {
+      font-size: 0.82rem !important;
+      font-weight: 400 !important;
+      color: var(--muted-color) !important;
+      line-height: 1.4;
+    }
+
+    /* 嵌套的【第三层及更深层】（进一步缩进） */
+    .sidebar-toc ul ul ul {
+      padding-left: 10px !important;
+    }
+
+    .sidebar-toc ul ul ul a {
+      font-size: 0.78rem !important;
+      opacity: 0.85;
+    }
+
+    /* 鼠标悬停的高亮反馈 */
+    .sidebar-toc a:hover {
+      color: var(--accent-color) !important;
+      text-decoration: none !important;
+    }
+
     /* ========================================== */
     /* --- 文章各级标题（H1 - H6）层次字号 --- */
     /* ========================================== */
@@ -285,8 +341,7 @@ main img, article img {
       font-size: 1em !important;
       font-weight: 600;
       margin: 1em 0 0.3em 0;
-    }
-    
+    }    
     /* 文章正文表格样式 */
     main table, article table {
       width: 100%;
