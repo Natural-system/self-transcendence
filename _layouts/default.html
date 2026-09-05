@@ -76,18 +76,31 @@
       --code-border: #333333;
     }
 
-    /* ========================================== */
-    /* --- 1.1 正文字号控制变量 (仅作用于 main 区域) --- */
-    /* ========================================== */
-    html[data-font-size="small"] main {
-      font-size: 15px;
-    }
-    html[data-font-size="normal"] main, html:not([data-font-size]) main {
-      font-size: 16px; /* 维持网站原汁原味的默认字号 */
-    }
-    html[data-font-size="large"] main {
-      font-size: 18px;
-    }
+/* 新的字号控制规则 */
+/* ========================================== */
+/* --- 1.1 正文字号控制变量 (涵盖文章与日志区域) --- */
+/* ========================================== */
+html[data-font-size="small"] main,
+html[data-font-size="small"] main * {
+  font-size: 15px !important;
+}
+
+html[data-font-size="normal"] main, 
+html[data-font-size="normal"] main *,
+html:not([data-font-size]) main,
+html:not([data-font-size]) main * {
+  font-size: 16px !important;
+}
+
+html[data-font-size="large"] main,
+html[data-font-size="large"] main * {
+  font-size: 18px !important;
+}
+
+/* 保护：避免日志或文章中的代码块、小标签字号被强制放大 */
+main pre, main code, main .post-date, main .post-index {
+  font-size: 0.85em !important;
+}
 
     body {
       background-color: var(--bg-color);
@@ -695,13 +708,19 @@
       display: inline-block;
     }
    
-    /* 1. 全局给 main 正文区域内的所有超链接加下划线 */
-    main a {
-      text-decoration: underline;
-      text-underline-offset: 3px;
-    }
+/* 1. 全局给 main 正文区域内的所有超链接加下划线（指定为实线） */
+main a {
+  text-decoration: underline solid; /* 显式声明为实线 */
+  text-underline-offset: 3px;
+}
 
-    /* 2. 强制排除导航栏、页头、目录、列表项等非文章正文的链接，保持无下划线 */
+/* 2. 强制鼠标悬停时依然保持实线下划线，防止变成波浪线 */
+main a:hover {
+  text-decoration: underline solid;
+  text-decoration-style: solid !important; /* 强制覆盖所有悬停波浪线样式 */
+}
+
+    /* 3. 强制排除导航栏、页头、目录、列表项等非文章正文的链接，保持无下划线 */
     nav.site-nav a,
     .site-title a,
     .sidebar-toc a,
@@ -713,7 +732,7 @@
       text-decoration: none !important;
     }
 
-    /* 3. 悬停保持原有的样式效果 */
+    /* 4. 悬停保持原有的样式效果 */
     nav.site-nav a:hover {
       text-decoration: none !important;
     }
