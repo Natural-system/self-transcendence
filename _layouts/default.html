@@ -28,15 +28,6 @@
   </script>
 
   <style>
-/* 全站 Utterances 评论区背景融合极简样式 */
-.article-comments iframe.utterances-frame {
-  mix-blend-mode: multiply;
-}
-
-html[data-theme="dark"] .article-comments iframe.utterances-frame {
-  mix-blend-mode: screen;
-}
-
     /* ========================================== */
     /* --- 导航栏“问答交流” Emoji 角标样式 --- */
     /* ========================================== */
@@ -936,6 +927,17 @@ main a:hover {
       border-color: var(--accent-color);
       color: var(--accent-color);
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    /* ========================================== */
+    /* --- 7. Giscus 评论区全主题融合补丁 --- */
+    /* ========================================== */
+    .article-comments iframe.giscus-frame {
+      mix-blend-mode: multiply;
+    }
+
+    html[data-theme="dark"] .article-comments iframe.giscus-frame {
+      mix-blend-mode: screen;
     }
 
     #back-to-top:hover svg {
