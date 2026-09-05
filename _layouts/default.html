@@ -867,15 +867,15 @@ function handleGlobalSearch() {
 
       overlay.style.display = 'block';
 
-      // 3. 动态更新弹窗顶部的标题文字
+// 3. 动态更新弹窗顶部的标题文字（方案 A）
       if (titleEl) {
         if (matches.length > 0) {
-          titleEl.innerText = '搜索结果（关键词出现 ' + grandTotalCount + ' 次）';
+          titleEl.innerText = '搜索结果：“' + query + '”（共出现 ' + grandTotalCount + ' 次）';
         } else {
-          titleEl.innerText = '搜索结果';
+          titleEl.innerText = '搜索结果：“' + query + '”（未找到相关结果）';
         }
       }
-
+      
       // 4. 渲染文章列表
       if (matches.length === 0) {
         listContainer.innerHTML = '';
