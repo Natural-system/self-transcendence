@@ -797,17 +797,33 @@ nav.site-nav a:hover {
       if(pb) pb.style.width = scrolled + "%";
     };
 
-    // 2. 全站全文搜索数据库构建 (正确 JSON 序列化)
-    var globalSearchDB = [
-      {% for post in site.posts %}
-        {
-          title: {{ post.title | jsonify }},
-          url: {{ post.url | relative_url | jsonify }},
-          date: {{ post.date | date: "%Y-%m-%d" | jsonify }},
-          content: {{ post.content | strip_html | newline_to_br | strip_newlines | replace: '<br />', ' ' | jsonify }}
-        }{% unless forloop.last %},{% endunless %}
-      {% endfor %}
-    ];
+// 2. 全站全文搜索数据库构建 (合并 文章 + 日志 + 独立页面如 about.md)
+{% assign all_searchable_items = site.posts | concat: site.logs %}
+
+{% comment %} 提取需要搜索的独立页面 (过滤掉 404、sitemap、分类等索引文件) {% endcomment %}
+{% assign valid_pages = "" | split: "" %}
+{% for page_item in site.pages %}
+  {% assign ext = page_item.name | split: '.' | last %}
+  {% if ext == 'md' or ext == 'html' %}
+    {% unless page_item.name == '404.html' or page_item.name == 'robots.txt' or page_item.name == 'sitemap.xml' or page_item.name == 'categories.html' or page_item.name == 'archive.html' or page_item.name == 'index.html' or page_item.name == 'googlee8da09ad1ffaa7d0.html' %}
+      {% assign valid_pages = valid_pages | push: page_item %}
+    {% endunless %}
+  {% endif %}
+{% endfor %}
+
+{% assign all_searchable_items = all_searchable_items | concat: valid_pages %}
+
+var globalSearchDB = [
+  {% for item in all_searchable_items %}
+    {
+      title: {{ item.title | default: item.name | jsonify }},
+      url: {{ item.url | relative_url | jsonify }},
+      date: {{ item.date | date: "%Y-%m-%d" | default: "" | jsonify }},
+      content: {{ item.content | strip_html | newline_to_br | strip_newlines | replace: '<br />', ' ' | jsonify }}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+];
+
 
 function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
