@@ -291,14 +291,32 @@
       margin-bottom: 20px;
     }
 
+    /* 左右两端对齐的响应式导航栏 */
     nav.site-nav {
       display: flex;
-      flex-wrap: wrap;
-      gap: 16px 20px;
+      justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
       font-size: 0.95rem;
       font-weight: 500;
       margin-top: 15px;
+    }
+
+    /* 左侧分类菜单组 */
+    .nav-left {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      align-items: center;
+    }
+
+    /* 右侧搜索与主题切换组 */
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto; /* 确保在换行时也能靠右 */
     }
 
     nav.site-nav a {
@@ -337,7 +355,6 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-left: 6px;
       padding-left: 8px;
       border-left: 1px solid var(--border-color);
       position: relative;
@@ -664,7 +681,7 @@ nav.site-nav a:hover {
   transform: translateX(4px); /* 鼠标滑过时，目录文字向右微动 4px */
   color: var(--accent-color); /* 自动高亮为当前主题的主色调 */
 }
-    </style>
+  </style>
 </head>
 <body>
 
@@ -678,35 +695,39 @@ nav.site-nav a:hover {
       <h1 class="site-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
       <div class="site-description">{{ site.description }}</div>
       
-      <!-- 平铺导航栏 -->
+      <!-- 左右两端对齐的导航栏 -->
       <nav class="site-nav">
-        <a href="{{ '/' | relative_url }}">首页</a>
-        <a href="{{ '/categories/#心理与社会' | relative_url }}">心理与社会</a>
-        <a href="{{ '/categories/#饮食' | relative_url }}">饮食</a>
-        <a href="{{ '/categories/#育儿' | relative_url }}">育儿</a>
-        <a href="{{ '/categories/#软件' | relative_url }}">软件</a>
-        <a href="{{ '/categories/#户外' | relative_url }}">户外</a>
-        <a href="{{ '/categories/#书影' | relative_url }}">书影</a>
-        <a href="{{ '/categories/#手作' | relative_url }}">手作</a>
-        <a href="{{ '/categories/#随笔' | relative_url }}">随笔</a>
-        <a href="{{ '/categories/#社区' | relative_url }}">社区</a>
-        <a href="{{ '/categories/#纪实' | relative_url }}">纪实</a>
-        <a href="{{ '/categories/#可持续' | relative_url }}">可持续</a>
-        <a href="{{ '/log/' | relative_url }}">日志</a> 
-        <a href="{{ '/about/' | relative_url }}">关于</a>
-        <a href="{{ '/archive/' | relative_url }}">年份归档</a>
-
-        <!-- 页头极简搜索框 -->
-        <div style="display: inline-flex; align-items: center; margin-left: 4px;">
-          <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
+        <!-- 左侧分类链接区域 -->
+        <div class="nav-left">
+          <a href="{{ '/' | relative_url }}">首页</a>
+          <a href="{{ '/categories/#心理与社会' | relative_url }}">心理与社会</a>
+          <a href="{{ '/categories/#饮食' | relative_url }}">饮食</a>
+          <a href="{{ '/categories/#育儿' | relative_url }}">育儿</a>
+          <a href="{{ '/categories/#软件' | relative_url }}">软件</a>
+          <a href="{{ '/categories/#户外' | relative_url }}">户外</a>
+          <a href="{{ '/categories/#书影' | relative_url }}">书影</a>
+          <a href="{{ '/categories/#手作' | relative_url }}">手作</a>
+          <a href="{{ '/categories/#随笔' | relative_url }}">随笔</a>
+          <a href="{{ '/categories/#社区' | relative_url }}">社区</a>
+          <a href="{{ '/categories/#纪实' | relative_url }}">纪实</a>
+          <a href="{{ '/categories/#可持续' | relative_url }}">可持续</a>
+          <a href="{{ '/log/' | relative_url }}">日志</a> 
+          <a href="{{ '/about/' | relative_url }}">关于</a>
+          <a href="{{ '/archive/' | relative_url }}">年份归档</a>
         </div>
 
-        <!-- 主题颜色切换器 -->
-        <div class="theme-switcher">
-          <span class="theme-dot" data-set-theme="light" title="日光模式" onclick="changeTheme('light')"></span>
-          <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式" onclick="changeTheme('warm')"></span>
-          <span class="theme-dot" data-set-theme="green" title="护眼绿模式" onclick="changeTheme('green')"></span>
-          <span class="theme-dot" data-set-theme="dark" title="暗黑模式" onclick="changeTheme('dark')"></span>
+        <!-- 右侧搜索与主题色选块区域 -->
+        <div class="nav-right">
+          <div style="display: inline-flex; align-items: center;">
+            <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
+          </div>
+
+          <div class="theme-switcher">
+            <span class="theme-dot" data-set-theme="light" title="日光模式" onclick="changeTheme('light')"></span>
+            <span class="theme-dot" data-set-theme="warm" title="羊皮纸模式" onclick="changeTheme('warm')"></span>
+            <span class="theme-dot" data-set-theme="green" title="护眼绿模式" onclick="changeTheme('green')"></span>
+            <span class="theme-dot" data-set-theme="dark" title="暗黑模式" onclick="changeTheme('dark')"></span>
+          </div>
         </div>
       </nav>
     </header>
@@ -759,7 +780,7 @@ nav.site-nav a:hover {
 <div id="search-modal-overlay" onclick="closeSearchModal(event)">
   <div class="search-modal-content" onclick="event.stopPropagation()">
     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 15px;">
-      <h3 id="search-modal-title" style="margin:0; font-size: 1.1rem; color:var(--text-color);">搜索结果</h3>  <!-- 👈 加了 id="search-modal-title" -->
+      <h3 id="search-modal-title" style="margin:0; font-size: 1.1rem; color:var(--text-color);">搜索结果</h3>
       <span onclick="closeSearchModalDirect()" style="cursor:pointer; font-size: 1.5rem; color:var(--muted-color); line-height: 1;">&times;</span>
     </div>
     <ul id="search-results-list" class="post-list"></ul>
@@ -824,7 +845,6 @@ var globalSearchDB = [
   {% endfor %}
 ];
 
-
 function handleGlobalSearch() {
       var input = document.getElementById('global-search-input');
       if (!input) return;
@@ -833,7 +853,7 @@ function handleGlobalSearch() {
       var overlay = document.getElementById('search-modal-overlay');
       var listContainer = document.getElementById('search-results-list');
       var noResultEl = document.getElementById('search-no-results');
-      var titleEl = document.getElementById('search-modal-title'); // 标题元素
+      var titleEl = document.getElementById('search-modal-title');
 
       if (!query) {
         overlay.style.display = 'none';
@@ -845,7 +865,7 @@ function handleGlobalSearch() {
       var regex = new RegExp(escapedQuery, 'gi');
 
       var matches = [];
-      var grandTotalCount = 0; // 全站累计出现的总次数
+      var grandTotalCount = 0;
 
       // 2. 遍历数据库计算匹配项与频次
       globalSearchDB.forEach(function(post) {
@@ -860,14 +880,13 @@ function handleGlobalSearch() {
         var totalCount = titleCount + contentCount;
 
         if (totalCount > 0) {
-          grandTotalCount += totalCount; // 累加全站总次数
+          grandTotalCount += totalCount;
           matches.push(post);
         }
       });
 
       overlay.style.display = 'block';
 
-// 3. 动态更新弹窗顶部的标题文字（方案 A）
       if (titleEl) {
         if (matches.length > 0) {
           titleEl.innerText = '搜索结果：“' + query + '”（共出现 ' + grandTotalCount + ' 次）';
@@ -955,10 +974,9 @@ function handleGlobalSearch() {
       var links = document.querySelectorAll('main a');
       links.forEach(function(link) {
         var href = link.getAttribute('href');
-        // 排除页面内部锚点跳转（如 #heading-1 或目录跳转）
         if (href && !href.startsWith('#')) {
           link.setAttribute('target', '_blank');
-          link.setAttribute('rel', 'noopener noreferrer'); // 安全防护
+          link.setAttribute('rel', 'noopener noreferrer');
         }
       });
     });  </script>
