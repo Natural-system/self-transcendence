@@ -28,6 +28,14 @@
   </script>
 
   <style>
+/* 全站 Utterances 评论区背景融合极简样式 */
+.article-comments iframe.utterances-frame {
+  mix-blend-mode: multiply;
+}
+
+html[data-theme="dark"] .article-comments iframe.utterances-frame {
+  mix-blend-mode: screen;
+}
 
     /* ========================================== */
     /* --- 导航栏“问答交流” Emoji 角标样式 --- */
@@ -49,7 +57,7 @@
       user-select: none;
     }
 
-    
+
     /* ========================================== */
     /* --- 1. 全局 CSS 变量与主题配置 --- */
     /* ========================================== */
