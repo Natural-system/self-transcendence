@@ -76,30 +76,50 @@
       --code-border: #333333;
     }
 
-/* 新的字号控制规则 */
 /* ========================================== */
-/* --- 1.1 正文字号控制变量 (涵盖文章与日志区域) --- */
+/* --- 1.1 正文字号控制变量 --- */
 /* ========================================== */
-html[data-font-size="small"] main,
-html[data-font-size="small"] main * {
+/* 仅控制正文段落、列表、表格、块级元素 */
+html[data-font-size="small"] main p,
+html[data-font-size="small"] main li,
+html[data-font-size="small"] main td,
+html[data-font-size="small"] main blockquote,
+html[data-font-size="small"] .log-content,
+html[data-font-size="small"] .log-item {
   font-size: 15px !important;
 }
 
-html[data-font-size="normal"] main, 
-html[data-font-size="normal"] main *,
-html:not([data-font-size]) main,
-html:not([data-font-size]) main * {
+html[data-font-size="normal"] main p,
+html[data-font-size="normal"] main li,
+html[data-font-size="normal"] main td,
+html[data-font-size="normal"] main blockquote,
+html[data-font-size="normal"] .log-content,
+html[data-font-size="normal"] .log-item,
+html:not([data-font-size]) main p,
+html:not([data-font-size]) main li,
+html:not([data-font-size]) main td,
+html:not([data-font-size]) main blockquote,
+html:not([data-font-size]) .log-content,
+html:not([data-font-size]) .log-item {
   font-size: 16px !important;
 }
 
-html[data-font-size="large"] main,
-html[data-font-size="large"] main * {
+html[data-font-size="large"] main p,
+html[data-font-size="large"] main li,
+html[data-font-size="large"] main td,
+html[data-font-size="large"] main blockquote,
+html[data-font-size="large"] .log-content,
+html[data-font-size="large"] .log-item {
   font-size: 18px !important;
 }
 
-/* 保护：避免日志或文章中的代码块、小标签字号被强制放大 */
-main pre, main code, main .post-date, main .post-index {
-  font-size: 0.85em !important;
+/* 目录字体保持精致小巧 (0.85rem)，不受大字号影响 */
+.sidebar-toc {
+  font-size: 0.85rem !important;
+}
+.sidebar-toc a {
+  font-size: 0.85rem !important;
+  line-height: 1.5;
 }
 
     body {
@@ -224,11 +244,49 @@ main pre, main code, main .post-date, main .post-index {
       transition: font-size 0.2s ease; /* 切换字号时平滑过渡 */
     }
 
-    main img, article img {
+main img, article img {
       max-width: 100%;
       height: auto;
     }
 
+    /* ========================================== */
+    /* --- 文章各级标题（H1 - H6）层次字号 --- */
+    /* ========================================== */
+    main h1, article h1 {
+      font-size: 1.75em !important;
+      font-weight: 700;
+      margin: 1.4em 0 0.6em 0;
+      line-height: 1.3;
+    }
+
+    main h2, article h2 {
+      font-size: 1.45em !important; /* 二级标题明显大于正文 */
+      font-weight: 700;
+      margin: 1.3em 0 0.5em 0;
+      padding-bottom: 0.3em;
+      border-bottom: 1px dashed var(--border-color);
+      line-height: 1.35;
+    }
+
+    main h3, article h3 {
+      font-size: 1.25em !important; /* 三级标题略大于正文 */
+      font-weight: 600;
+      margin: 1.2em 0 0.4em 0;
+      line-height: 1.4;
+    }
+
+    main h4, article h4 {
+      font-size: 1.1em !important;
+      font-weight: 600;
+      margin: 1em 0 0.4em 0;
+    }
+
+    main h5, article h5, main h6, article h6 {
+      font-size: 1em !important;
+      font-weight: 600;
+      margin: 1em 0 0.3em 0;
+    }
+    
     /* 文章正文表格样式 */
     main table, article table {
       width: 100%;
