@@ -1,0 +1,48 @@
+---
+layout: default
+title: 问答交流
+permalink: /community/
+---
+
+<style>
+  .community-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px 0;
+  }
+  .community-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .community-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .community-desc {
+    color: var(--muted-color);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="community-container">
+  <header class="community-header">
+    <h1 class="community-title">问答交流</h1>
+    <div class="community-desc">
+      欢迎在此留言提问、探讨或分享想法。请保持友好理性的讨论氛围，违规内容会被管理员清理。
+    </div>
+  </header>
+
+  <!-- 专属于问答交流页面的 Utterances 评论区 -->
+  <div class="article-comments">
+    <script src="https://utteranc.es/client.js"
+            repo="Natural-system/self-transcendence"
+            issue-term="q-and-a-discussion"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+    </script>
+  </div>
+</div>
