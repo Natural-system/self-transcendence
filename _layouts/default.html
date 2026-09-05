@@ -862,7 +862,7 @@ main a:hover {
     }
 
 /* ========================================== */
-    /* --- 6. 极简平滑返回顶部组件样式 --- */
+    /* --- 6. 全主题自适应返回顶部组件样式 --- */
     /* ========================================== */
     #back-to-top {
       position: fixed;
@@ -872,20 +872,21 @@ main a:hover {
       width: 42px;
       height: 42px;
       
-      /* 使用 flex 让 SVG 矢量图标完美居中 */
+      /* 使用 flex 让 SVG 图标完美居中 */
       display: flex;
       align-items: center;
       justify-content: center;
       
+      /* 使用卡片/背景变量，并赋予清晰的边框与对比阴影 */
       background-color: var(--bg-color);
       color: var(--text-color);
-      border: 1px solid var(--border-color);
+      border: 1.5px solid var(--border-color);
       border-radius: 50%;
       cursor: pointer;
       opacity: 0;
       visibility: hidden;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       user-select: none;
     }
 
@@ -898,18 +899,34 @@ main a:hover {
       visibility: visible;
     }
 
+    /* 悬停状态：突出主题色与光泽感 */
     #back-to-top:hover {
       opacity: 1;
       transform: translateY(-3px);
       border-color: var(--accent-color);
       color: var(--accent-color);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
     }
 
     #back-to-top:hover svg {
-      transform: translateY(-2px); /* 悬停时箭头向上微动，极为优雅 */
+      transform: translateY(-2px);
     }
- 
+
+    /* 针对深色/黑色主题（Dark Mode）的专项优化 */
+    html[data-theme="dark"] #back-to-top {
+      background-color: #242424; /* 使用比纯黑背景略亮的深灰色，让圆圈轮廓脱颖而出 */
+      border-color: #444444;    /* 明显的深色边框 */
+      color: #e0e0e0;          /* 保证箭头图标高亮显示 */
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5); /* 加深阴影 */
+    }
+
+    html[data-theme="dark"] #back-to-top:hover {
+      background-color: #2c2c2c;
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+    
+    
  </style>
 </head>
 <body>
