@@ -914,8 +914,9 @@ function handleGlobalSearch() {
       if (e.key === 'Escape') closeSearchModalDirect();
     });
 
-    // 3. 代码块一键复制功能注入
+// 3. 代码块一键复制功能注入 & 超链接新标签页打开
     document.addEventListener('DOMContentLoaded', function() {
+      // 3.1 代码块一键复制功能
       var codeBlocks = document.querySelectorAll('pre');
 
       codeBlocks.forEach(function(pre) {
@@ -949,7 +950,17 @@ function handleGlobalSearch() {
 
         pre.appendChild(btn);
       });
-    });
-  </script>
+
+      // 3.2 自动为 main 正文区域内的所有超链接添加新标签页打开属性
+      var links = document.querySelectorAll('main a');
+      links.forEach(function(link) {
+        var href = link.getAttribute('href');
+        // 排除页面内部锚点跳转（如 #heading-1 或目录跳转）
+        if (href && !href.startsWith('#')) {
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer'); // 安全防护
+        }
+      });
+    });  </script>
 </body>
 </html>
