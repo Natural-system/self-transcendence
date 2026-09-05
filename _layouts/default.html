@@ -307,19 +307,17 @@
       margin-bottom: 20px;
     }
 
-    /* 响应式两端精准对齐导航栏 */
+    /* 方案 A：双行对齐导航结构 */
     nav.site-nav {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px 20px;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 15px;
       font-size: 0.95rem;
       font-weight: 500;
-      margin-top: 15px;
     }
 
-    /* 左侧分类菜单组 */
+    /* 第一行：左侧分类菜单 */
     .nav-left {
       display: flex;
       flex-wrap: wrap;
@@ -327,12 +325,13 @@
       align-items: center;
     }
 
-    /* 右侧搜索与工具切换组（精准靠右对齐） */
+    /* 第二行：右侧工具栏（全宽、强制精准靠最右对齐） */
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 14px;
-      margin-left: auto; /* 保证靠右对齐 */
+      justify-content: flex-end;
+      gap: 16px;
+      width: 100%;
     }
 
     nav.site-nav a {
@@ -351,7 +350,7 @@
     }
 
     .nav-search-input {
-      width: 120px;
+      width: 130px;
       padding: 4px 10px;
       font-size: 0.85rem;
       border: 1px solid var(--border-color);
@@ -363,7 +362,7 @@
     }
     .nav-search-input:focus {
       border-color: var(--accent-color);
-      width: 145px;
+      width: 160px;
     }
 
     /* --- 字号切换器组件 --- */
@@ -378,7 +377,7 @@
 
     .font-btn {
       cursor: pointer;
-      padding: 1px 4px;
+      padding: 1px 5px;
       border-radius: 3px;
       transition: color 0.2s ease, background-color 0.2s ease;
     }
@@ -780,9 +779,9 @@
       <h1 class="site-title"><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
       <div class="site-description">{{ site.description }}</div>
       
-      <!-- 左右两端精准对齐的导航栏 -->
+      <!-- 方案 A：双行独立排版的导航栏 -->
       <nav class="site-nav">
-        <!-- 左侧分类链接区域 -->
+        <!-- 第一行：分类菜单组 -->
         <div class="nav-left">
           <a href="{{ '/' | relative_url }}">首页</a>
           <a href="{{ '/categories/#心理与社会' | relative_url }}">心理与社会</a>
@@ -801,7 +800,7 @@
           <a href="{{ '/archive/' | relative_url }}">年份归档</a>
         </div>
 
-        <!-- 右侧工具区域 (搜索 + 字号切换 + 主题调色盘) -->
+        <!-- 第二行：搜索 + 字号 + 主题工具栏（整体精准靠最右对齐） -->
         <div class="nav-right">
           <div style="display: inline-flex; align-items: center;">
             <input type="text" id="global-search-input" class="nav-search-input" placeholder="搜索关键词..." oninput="handleGlobalSearch()">
