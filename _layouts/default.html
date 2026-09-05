@@ -1230,7 +1230,7 @@ main a:hover {
       if (e.key === 'Escape') closeSearchModalDirect();
     });
 
-    // 3. 代码块一键复制功能注入 & 超链接新标签页打开
+// 3. 代码块一键复制功能注入、返回顶部事件 & 超链接新标签页打开
     document.addEventListener('DOMContentLoaded', function() {
       // 3.1 代码块一键复制功能
       var codeBlocks = document.querySelectorAll('pre');
@@ -1267,16 +1267,39 @@ main a:hover {
         pre.appendChild(btn);
       });
 
-      // 3.2 自动为 main 正文区域内的所有超链接添加新标签页打开属性
+      // 3.2 自动为 main 正文区域内的【外部超链接】添加新标签页打开属性（排除锚点和 javascript 伪协议）
       var links = document.querySelectorAll('main a');
       links.forEach(function(link) {
         var href = link.getAttribute('href');
-        if (href && !href.startsWith('#')) {
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
           link.setAttribute('target', '_blank');
           link.setAttribute('rel', 'noopener noreferrer');
         }
       });
+
+      // 3.3 返回顶部按钮交互逻辑 (修复点击失效)
+      var backToTopBtn = document.getElementById('back-to-top');
+      if (backToTopBtn) {
+        // 滚动超过 300px 显示按钮
+        window.addEventListener('scroll', function() {
+          if (window.scrollY > 300) {
+            backToTopBtn.classList.add('show');
+          } else {
+            backToTopBtn.classList.remove('show');
+          }
+        });
+
+        // 点击平滑滚动至顶部
+        backToTopBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+          });
+        });
+      }
     });
   </script>
-</body>
+  </body>
 </html>
