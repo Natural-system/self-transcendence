@@ -337,17 +337,25 @@ layout: default
       {% endfor %}
     </div>
 
-    <!-- Utterances 评论区系统 -->
+<!-- 评论区系统 (Giscus) -->
     <div class="article-comments" style="margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
-      <script src="https://utteranc.es/client.js"
-              repo="Natural-system/self-transcendence"
-              issue-term="pathname"
-              theme="github-light"
+      <script src="https://giscus.app/client.js"
+              data-repo="Natural-system/self-transcendence"
+              data-repo-id="R_kgDOTyeF1g"
+              data-category="General"
+              data-category-id="DIC_kwDOTyeF1s4DE8hV"
+              data-mapping="pathname"
+              data-strict="0"
+              data-reactions-enabled="1"
+              data-emit-metadata="0"
+              data-input-position="bottom"
+              data-theme="preferred_color_scheme"
+              data-lang="zh-CN"
               crossorigin="anonymous"
               async>
       </script>
     </div>
-  </div>
+    </div>
 </div>
 
 <!-- 三级层级解析 + 字数统计 + 滚动触底自动加载 + 侧栏时间线脚本 -->
